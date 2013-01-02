@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" 
+    android:background="#000000" >
+
+    <TextView
+        android:id="@+id/vehicle_speed"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/shift_indicator"
+        android:layout_alignRight="@+id/shift_indicator"
+        android:textSize="30sp" />
+    
+    <TextView
+        android:id="@+id/engine_speed"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/vehicle_speed"
+        android:layout_alignRight="@+id/shift_indicator"
+        android:textSize="30sp" />
+    
+    <TextView
+        android:id="@+id/pedal_position"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed"
+        android:layout_alignRight="@+id/shift_indicator"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/engine_speed_label"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/engine_speed"
+        android:layout_alignBottom="@+id/engine_speed"
+        android:layout_alignLeft="@+id/shift_indicator"
+        android:text="@string/engine_speed"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/vehicle_speed_label"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vehicle_speed"
+        android:layout_alignLeft="@+id/shift_indicator"
+        android:text="@string/vehicle_speed"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/pedal_position_label"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed"
+        android:layout_alignLeft="@+id/shift_indicator"
+        android:text="@string/pedal_position"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+        
+    <TextView
+        android:id="@+id/shift_indicator"
+        android:layout_width="300sp"
+        android:layout_height="100sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="90sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

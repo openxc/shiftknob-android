@@ -1,0 +1,215 @@
+package com.example.shiftindicator;
+
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import com.openxc.VehicleManager;
+import com.openxc.measurements.AcceleratorPedalPosition;
+import com.openxc.measurements.EngineSpeed;
+import com.openxc.measurements.Measurement;
+import com.openxc.measurements.UnrecognizedMeasurementTypeException;
+import com.openxc.measurements.VehicleSpeed;
+import com.openxc.remote.VehicleServiceException;
+import com.openxc.sources.DataSourceException;
+import com.openxc.sources.trace.TraceVehicleDataSource;
+
+import android.os.Bundle;
+import android.os.IBinder;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.text.Layout;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+
+	private VehicleManager mVehicleManager;
+	private MeasurementUpdater mUpdater;
+	private TextView mVehicleSpeedView;
+	private TextView mEngineSpeedView;
+	private TextView mShiftIndicator;
+	private TextView mPedalView;
+	private View mLayout;
+	private TraceVehicleDataSource mTraceSource;
+	private int engine_speed;
+	private double vehicle_speed;
+	private double pedal_pos;
+	
+	private int currentGear;
+//	FIGO RATIOS rpm/speed
+//
+//	private double ratio1 = 139.9;
+//	private double ratio2 = 75.2;
+//	private double ratio3 = 50.0;
+//	private double ratio4 = 37.2;
+//	private double ratio5 = 29.5;
+	
+//	Focus ST RATIOS rpm/speed:
+	private int ratio1 = 114;
+	private int ratio2 = 69;
+	private int ratio3 = 46;
+	private int ratio4 = 36;
+	private int ratio5 = 28;
+	private int ratio6 = 23;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		Intent intent = new Intent(this, VehicleManager.class);
+	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	    mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
+	    mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
+	    mShiftIndicator = (TextView) findViewById(R.id.shift_indicator);
+	    mPedalView = (TextView) findViewById(R.id.pedal_position);
+	    mLayout = findViewById(R.id.layout);
+	    mLayout.setBackgroundColor(Color.BLACK);
+	    
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	public void onPause() {
+	    super.onPause();
+	    Log.i("openxc", "Unbinding from vehicle service");
+	    unbindService(mConnection);
+	    mVehicleManager.removeSource(mTraceSource);
+	}
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+	    // Called when the connection with the service is established
+	    public void onServiceConnected(ComponentName className,
+	            IBinder service) {
+	        Log.i("openxc", "Bound to VehicleManager");
+	        mVehicleManager = ((VehicleManager.VehicleBinder)service).getService();
+	        try {
+				mVehicleManager.addListener(VehicleSpeed.class, mSpeedListener);
+				mVehicleManager.addListener(EngineSpeed.class, mEngineListener);
+				mVehicleManager.addListener(AcceleratorPedalPosition.class, mPedalListener);
+				mVehicleManager.addListener(ShiftRecommendation.class, mShiftRecommendation);
+			} catch (VehicleServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnrecognizedMeasurementTypeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        URI mTraceFile;
+			try {
+				mTraceFile = new URI("file:///sdcard/com.openxc/shiftIndicateTraceboolean.json");
+				mTraceSource = new TraceVehicleDataSource(MainActivity.this, mTraceFile);
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (DataSourceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        mVehicleManager.addSource(mTraceSource);
+	        mUpdater = new MeasurementUpdater();
+	        mUpdater.start();
+	    }
+
+	    // Called when the connection with the service disconnects unexpectedly
+	    public void onServiceDisconnected(ComponentName className) {
+	        Log.w("openxc", "VehicleService disconnected unexpectedly");
+	        mVehicleManager = null;
+	        mUpdater = null;
+	    }
+	};
+	
+	VehicleSpeed.Listener mSpeedListener = new VehicleSpeed.Listener() {
+		public void receive(Measurement measurement) {
+		    final VehicleSpeed updated_value = (VehicleSpeed) measurement;
+		    vehicle_speed = updated_value.getValue().doubleValue();
+		    MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		        	// send vehicle speed with 1 decimal point
+		            mVehicleSpeedView.setText(""+Math.round(vehicle_speed*10)/10);
+		        }
+		    });
+		}
+	};
+
+	EngineSpeed.Listener mEngineListener = new EngineSpeed.Listener() {
+		public void receive(Measurement measurement) {
+		    final EngineSpeed updated_value = (EngineSpeed) measurement;
+		    engine_speed = updated_value.getValue().intValue();
+		    MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		            mEngineSpeedView.setText(""+engine_speed);
+		        }
+		    });
+		}
+	};		
+	
+	AcceleratorPedalPosition.Listener mPedalListener = new AcceleratorPedalPosition.Listener() {
+		public void receive(Measurement measurement) {
+		    final AcceleratorPedalPosition updated_value = (AcceleratorPedalPosition) measurement;
+		    pedal_pos = updated_value.getValue().doubleValue();
+		    MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		            mPedalView.setText(""+(int)pedal_pos);
+		        }
+		    });
+		}
+	};
+	
+	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
+		public void receive(Measurement measurement) {
+		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
+		    MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		        	if (updated_value.getValue().booleanValue() == true) {
+		        		mShiftIndicator.setText("SHIFT!");
+		        		mLayout.setBackgroundColor(Color.WHITE);
+		        	}
+		        	else {
+		        		mLayout.setBackgroundColor(Color.BLACK);
+		        		mShiftIndicator.setText("");
+		        	}
+		        }
+		    });
+		}
+	};
+	
+	private class MeasurementUpdater extends Thread {
+        private boolean mRunning = true;
+
+        public void done() {
+            mRunning = false;
+        }
+
+        public void run() {
+            while(mRunning) {
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+                int pollFrequency = 100;
+                try {
+                    Thread.sleep(pollFrequency);
+                } catch (InterruptedException e) {
+                	e.printStackTrace();
+                }
+            }
+        }
+    }
+}
