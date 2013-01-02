@@ -76,4 +76,13 @@
         android:textSize="90sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/shift_calculated"
+        android:layout_width="300sp"
+        android:layout_height="100sp"
+        android:layout_alignLeft="@+id/shift_indicator"
+        android:layout_below="@+id/shift_indicator"
+        android:textSize="90sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
