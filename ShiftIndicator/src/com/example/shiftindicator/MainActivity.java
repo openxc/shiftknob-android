@@ -175,10 +175,10 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
-		        		mLayout.setBackgroundColor(Color.WHITE);
+		        		//mLayout.setBackgroundColor(Color.WHITE);
 		        	}
 		        	else {
-		        		mLayout.setBackgroundColor(Color.BLACK);
+		        		//mLayout.setBackgroundColor(Color.BLACK);
 		        		mShiftIndicator.setText("");
 		        	}
 		        }
