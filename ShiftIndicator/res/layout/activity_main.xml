@@ -69,6 +69,7 @@
         
     <TextView
         android:id="@+id/shift_indicator"
+        android:textColor="#FFFFFF"
         android:layout_width="300sp"
         android:layout_height="100sp"
         android:layout_centerHorizontal="true"
@@ -78,6 +79,7 @@
 
     <TextView
         android:id="@+id/shift_calculated"
+        android:textColor="#FFFFFF"
         android:layout_width="300sp"
         android:layout_height="100sp"
         android:layout_alignLeft="@+id/shift_indicator"

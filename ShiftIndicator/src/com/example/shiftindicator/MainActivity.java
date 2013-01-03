@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
 	private TextView mVehicleSpeedView;
 	private TextView mEngineSpeedView;
 	private TextView mShiftIndicator;
+	private TextView mShiftCalc;
 	private TextView mPedalView;
 	private View mLayout;
 	private TraceVehicleDataSource mTraceSource;
@@ -43,6 +44,9 @@ public class MainActivity extends Activity {
 	private double pedal_pos;
 	
 	private int currentGear;
+	private double base_pedal_position = 15.0;
+	private int min_rpm = 1200;
+	
 //	FIGO RATIOS rpm/speed
 //
 //	private double ratio1 = 139.9;
@@ -68,6 +72,7 @@ public class MainActivity extends Activity {
 	    mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
 	    mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
 	    mShiftIndicator = (TextView) findViewById(R.id.shift_indicator);
+	    mShiftCalc = (TextView) findViewById(R.id.shift_calculated);
 	    mPedalView = (TextView) findViewById(R.id.pedal_position);
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
@@ -153,6 +158,59 @@ public class MainActivity extends Activity {
 		            mEngineSpeedView.setText(""+engine_speed);
 		        }
 		    });
+		    
+		    // Gear position calculation
+		    
+		    // First calculate gear based on ratio of rpm to speed
+		    if(vehicle_speed==0) vehicle_speed = 1;
+		    double ratio = engine_speed/vehicle_speed;
+		    int next_ratio=1;
+		    
+		    if((ratio1*1.03) > ratio && (ratio1*.97) < ratio){
+		    	next_ratio=ratio2;
+		    }
+		    else if((ratio2*1.03) > ratio && (ratio2*.97) < ratio){
+		    	next_ratio=ratio3;
+		    }
+		    else if((ratio3*1.03) > ratio && (ratio3*.97) < ratio){
+		    	next_ratio=ratio4;
+		    }
+		    else if((ratio4*1.03) > ratio && (ratio4*.97) < ratio){
+		    	next_ratio=ratio5;
+		    }
+		    else if((ratio5*1.03) > ratio && (ratio5*.97) < ratio){
+		    	next_ratio=ratio6;
+		    }
+		    else {
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mShiftCalc.setText("");
+			        }
+			    }); 
+		    	return;
+		    }
+		    
+		    if (pedal_pos < 10) return;
+		    
+		    double next_rpm;
+		    if (pedal_pos >= base_pedal_position){
+		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-35*pedal_pos+1457;
+		    }
+		    else next_rpm=min_rpm;
+		    
+		    if (vehicle_speed > next_rpm/next_ratio){
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mShiftCalc.setText("Shift!!");
+			        }
+			    }); 
+		    }
+		    
+		    else MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		            mShiftCalc.setText("");
+		        }
+		    }); 
 		}
 	};		
 	
@@ -175,7 +233,7 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
-		        		//mLayout.setBackgroundColor(Color.WHITE);
+		        		//mLayout.setBackgroundColor(Color.WHITE); // flash the background when the driver should shift
 		        	}
 		        	else {
 		        		//mLayout.setBackgroundColor(Color.BLACK);
