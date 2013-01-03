@@ -190,7 +190,14 @@ public class MainActivity extends Activity {
 		    	return;
 		    }
 		    
-		    if (pedal_pos < 10) return;
+		    if (pedal_pos < 10) {
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mShiftCalc.setText("");
+			        }
+			    });
+		    	return;
+		    }
 		    
 		    double next_rpm;
 		    if (pedal_pos >= base_pedal_position){
@@ -204,6 +211,12 @@ public class MainActivity extends Activity {
 			            mShiftCalc.setText("Shift!!");
 			        }
 			    }); 
+		    	try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		    
 		    else MainActivity.this.runOnUiThread(new Runnable() {
