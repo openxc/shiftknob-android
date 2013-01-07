@@ -12,6 +12,8 @@ int clockPin = 12;
 ////Pin connected to DS of 74HC595
 int dataPin = 11;
 
+//segments are turned on when the cooresponding pin on the 
+//shift register is low.
 int digit0 = 0b10001000;
 int digit1 = 0b11101110;
 int digit2 = 0b10010100;
@@ -22,7 +24,7 @@ int digit6 = 0b10000011;
 int digit7 = 0b11101100;
 int digit8 = 0b10000000;
 int digit9 = 0b11100000;
-// if you want to add in the decimal point simply add 1 to each number
+// if you want to add in the decimal point simply subtract 0b10000000 from each number
 
 void setup() {
   //set pins to output so you can control the shift register
