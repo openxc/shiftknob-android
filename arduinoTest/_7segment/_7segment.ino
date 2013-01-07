@@ -1,3 +1,10 @@
+//Zachary Nelson
+//znelson1@ford.com
+//This program uses a 74hc595 shift register and a
+//7-sement display to display the numbers 0 - 9. It
+//is used to test future implementations of the 
+//display control.
+
 //Pin connected to ST_CP of 74HC595
 int latchPin = 8;
 //Pin connected to SH_CP of 74HC595
@@ -5,16 +12,16 @@ int clockPin = 12;
 ////Pin connected to DS of 74HC595
 int dataPin = 11;
 
-int digit0 = 0b0;
-int digit1 = 0b00010001;
-int digit2 = 0b01101011;
-int digit3 = 0b00111011;
-int digit4 = 0b00011101;
-int digit5 = 0b00111110;
-int digit6 = 0b01111100;
-int digit7 = 0b00010011;
-int digit8 = 0b01111111;
-int digit9 = 0b00011111;
+int digit0 = 0b10001000;
+int digit1 = 0b11101110;
+int digit2 = 0b10010100;
+int digit3 = 0b11000100;
+int digit4 = 0b11100010;
+int digit5 = 0b11000001;
+int digit6 = 0b10000011;
+int digit7 = 0b11101100;
+int digit8 = 0b10000000;
+int digit9 = 0b11100000;
 // if you want to add in the decimal point simply add 1 to each number
 
 void setup() {
@@ -35,7 +42,6 @@ void loop() {
     sendDigit(digit7);
     sendDigit(digit8);
     sendDigit(digit9);
-  }
 }
 
 void sendDigit(int x){
@@ -43,7 +49,7 @@ void sendDigit(int x){
   // the LEDs don't change while you're sending in bits:
   digitalWrite(latchPin, LOW);
   // shift out the bits:
-  shiftOut(dataPin, clockPin, MSBFIRST, x);  
+  shiftOut(dataPin, clockPin, LSBFIRST, x);  
 
   //take the latch pin high so the LEDs will light up:
   digitalWrite(latchPin, HIGH);
