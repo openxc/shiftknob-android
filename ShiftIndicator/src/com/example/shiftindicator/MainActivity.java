@@ -265,31 +265,4 @@ public class MainActivity extends Activity {
 		    });
 		}
 	};
-	
-	private class MeasurementUpdater extends Thread {
-        private boolean mRunning = true;
-
-        public void done() {
-            mRunning = false;
-        }
-
-        public void run() {
-            while(mRunning) {
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-                int pollFrequency = 100;
-                try {
-                    Thread.sleep(pollFrequency);
-                } catch (InterruptedException e) {
-                	e.printStackTrace();
-                }
-            }
-        }
-    }
 }
