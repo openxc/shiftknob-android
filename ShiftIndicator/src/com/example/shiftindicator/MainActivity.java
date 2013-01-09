@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
 	private int engine_speed;
 	private double vehicle_speed;
 	private double pedal_pos;
+	private long shiftTime;
 	
 	private int currentGear;
 	private double base_pedal_position = 15.0;
@@ -166,6 +167,7 @@ public class MainActivity extends Activity {
 		    if(vehicle_speed==0) vehicle_speed = 1;
 		    double ratio = engine_speed/vehicle_speed;
 		    int next_ratio=1;
+		    long currentTime = new Date().getTime();
 		    
 		    if((ratio1*1.03) > ratio && (ratio1*.97) < ratio){
 		    	next_ratio=ratio2;
@@ -183,42 +185,54 @@ public class MainActivity extends Activity {
 		    	next_ratio=ratio6;
 		    }
 		    else {
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mShiftCalc.setText("");
-			        }
-			    }); 
+		    	cancelShift(currentTime); 
 		    	return;
 		    }
 		    
+		    //if the pedal_pos is less than 10 then the driver is probably
+		    //shifting or slowing down so no shift indication is needed
 		    if (pedal_pos < 10) {
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mShiftCalc.setText("");
-			        }
-			    });
+		    	cancelShift(currentTime);
 		    	return;
 		    }
 		    
+		    //check if the pedal position is above the minimum threshold.
+		    //if the pedal position is above the minimum threshold, then the 
+		    //driver is thought to be accelerating heavily and thus the shift indication
+		    //should be sent at a higher RPM:
 		    double next_rpm;
 		    if (pedal_pos >= base_pedal_position){
+		    	//algorithm based on particular vehicle. requires tweeking for best performance
 		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1400;
 		    }
+		    
 		    else next_rpm=min_rpm;
 		    
+		    //check to see if the rpm in the next gear is high enough given
+		    // the vehicle_speed and ratio of the next gear:
 		    if (vehicle_speed > next_rpm/next_ratio){
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
 			            mShiftCalc.setText("Shift!!");
 			        }
 			    }); 
+		    	//check the time so that the "Shift!!" signal is sent for at least 1000 ms
+		    	shiftTime = new Date().getTime();
 		    }
 		    
-		    else MainActivity.this.runOnUiThread(new Runnable() {
-		        public void run() {
-		            mShiftCalc.setText("");
-		        }
-		    }); 
+		    else cancelShift(currentTime);
+		}
+
+		private void cancelShift(long t) {
+			// TODO Auto-generated method stub
+			if (t-shiftTime>1000){
+				MainActivity.this.runOnUiThread(new Runnable() {
+					public void run() {
+						mShiftCalc.setText("");		
+					}
+				});
+			}
+			return;
 		}
 	};		
 	
