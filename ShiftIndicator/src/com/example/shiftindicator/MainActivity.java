@@ -32,7 +32,6 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
 	private VehicleManager mVehicleManager;
-	private MeasurementUpdater mUpdater;
 	private TextView mVehicleSpeedView;
 	private TextView mEngineSpeedView;
 	private TextView mShiftIndicator;
@@ -126,15 +125,12 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 			}
 	        mVehicleManager.addSource(mTraceSource);
-	        mUpdater = new MeasurementUpdater();
-	        mUpdater.start();
 	    }
 
 	    // Called when the connection with the service disconnects unexpectedly
 	    public void onServiceDisconnected(ComponentName className) {
 	        Log.w("openxc", "VehicleService disconnected unexpectedly");
 	        mVehicleManager = null;
-	        mUpdater = null;
 	    }
 	};
 	
