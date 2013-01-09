@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
 	private TextView mShiftIndicator;
 	private TextView mShiftCalc;
 	private TextView mPedalView;
+	private TextView mGearPosition;
 	private View mLayout;
 	private TraceVehicleDataSource mTraceSource;
 	private int engine_speed;
@@ -46,7 +47,7 @@ public class MainActivity extends Activity {
 	
 	private int currentGear;
 	private double base_pedal_position = 15.0;
-	private int min_rpm = 1200;
+	private int min_rpm = 1300;
 	
 //	FIGO RATIOS rpm/speed
 //
@@ -55,6 +56,7 @@ public class MainActivity extends Activity {
 //	private double ratio3 = 50.0;
 //	private double ratio4 = 37.2;
 //	private double ratio5 = 29.5;
+//  private double ratio6 = 1; // does not exist in Figo
 	
 //	Focus ST RATIOS rpm/speed:
 	private int ratio1 = 114;
@@ -75,6 +77,7 @@ public class MainActivity extends Activity {
 	    mShiftIndicator = (TextView) findViewById(R.id.shift_indicator);
 	    mShiftCalc = (TextView) findViewById(R.id.shift_calculated);
 	    mPedalView = (TextView) findViewById(R.id.pedal_position);
+	    mGearPosition = (TextView) findViewById(R.id.gear_position);
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
 	    
@@ -165,22 +168,60 @@ public class MainActivity extends Activity {
 		    int next_ratio=1;
 		    long currentTime = new Date().getTime();
 		    
-		    if((ratio1*1.03) > ratio && (ratio1*.97) < ratio){
+		    if((ratio1*1.04) > ratio && (ratio1*.96) < ratio){
 		    	next_ratio=ratio2;
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("1");
+			        }
+			    });
 		    }
-		    else if((ratio2*1.03) > ratio && (ratio2*.97) < ratio){
+		    else if((ratio2*1.04) > ratio && (ratio2*.96) < ratio){
 		    	next_ratio=ratio3;
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("2");
+			        }
+			    });
 		    }
-		    else if((ratio3*1.03) > ratio && (ratio3*.97) < ratio){
+		    else if((ratio3*1.04) > ratio && (ratio3*.96) < ratio){
 		    	next_ratio=ratio4;
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("3");
+			        }
+			    });
 		    }
-		    else if((ratio4*1.03) > ratio && (ratio4*.97) < ratio){
+		    else if((ratio4*1.04) > ratio && (ratio4*.96) < ratio){
 		    	next_ratio=ratio5;
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("4");
+			        }
+			    });
 		    }
-		    else if((ratio5*1.03) > ratio && (ratio5*.97) < ratio){
+		    else if((ratio5*1.04) > ratio && (ratio5*.96) < ratio){
 		    	next_ratio=ratio6;
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("5");
+			        }
+			    });
+		    }
+		    else if((ratio6*1.04) > ratio && (ratio6*.96) < ratio){
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("6");
+			        }
+			    });
+		    	cancelShift(currentTime);
 		    }
 		    else {
+		    	MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mGearPosition.setText("N");
+			        }
+			    });
 		    	cancelShift(currentTime); 
 		    	return;
 		    }
@@ -199,7 +240,7 @@ public class MainActivity extends Activity {
 		    double next_rpm;
 		    if (pedal_pos >= base_pedal_position){
 		    	//algorithm based on particular vehicle. requires tweeking for best performance
-		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1400;
+		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1480;
 		    }
 		    
 		    else next_rpm=min_rpm;
@@ -212,7 +253,6 @@ public class MainActivity extends Activity {
 			            mShiftCalc.setText("Shift!!");
 			        }
 			    }); 
-		    	//check the time so that the "Shift!!" signal is sent for at least 1000 ms
 		    	shiftTime = new Date().getTime();
 		    }
 		    
@@ -220,7 +260,7 @@ public class MainActivity extends Activity {
 		}
 
 		private void cancelShift(long t) {
-			// TODO Auto-generated method stub
+			// only cancel the shift indication after it's been on the screen for 1000ms
 			if (t-shiftTime>1000){
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {

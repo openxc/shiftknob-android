@@ -87,4 +87,14 @@
         android:textSize="90sp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/gear_position"
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:layout_above="@+id/pedal_position_label"
+        android:layout_alignLeft="@+id/pedal_position_label"
+        android:textColor="#FFFFFF"
+        android:textSize="90sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
