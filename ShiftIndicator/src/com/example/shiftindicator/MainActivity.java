@@ -50,21 +50,20 @@ public class MainActivity extends Activity {
 	private int min_rpm = 1300;
 	
 //	FIGO RATIOS rpm/speed
-//
-//	private double ratio1 = 139.9;
-//	private double ratio2 = 75.2;
-//	private double ratio3 = 50.0;
-//	private double ratio4 = 37.2;
-//	private double ratio5 = 29.5;
-//  private double ratio6 = 1; // does not exist in Figo
+	private int ratio1 = 140;
+	private int ratio2 = 75;
+	private int ratio3 = 50;
+	private int ratio4 = 37;
+	private int ratio5 = 30;
+    private int ratio6 = 1; // does not exist in Figo
 	
 //	Focus ST RATIOS rpm/speed:
-	private int ratio1 = 114;
+/*	private int ratio1 = 114;
 	private int ratio2 = 69;
 	private int ratio3 = 46;
 	private int ratio4 = 36;
 	private int ratio5 = 28;
-	private int ratio6 = 23;
+	private int ratio6 = 23;*/
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +126,7 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        mVehicleManager.addSource(mTraceSource);
+	        //mVehicleManager.addSource(mTraceSource);
 	    }
 
 	    // Called when the connection with the service disconnects unexpectedly
