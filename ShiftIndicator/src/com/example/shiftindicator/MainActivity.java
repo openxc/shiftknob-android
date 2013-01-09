@@ -202,7 +202,7 @@ public class MainActivity extends Activity {
 		    
 		    double next_rpm;
 		    if (pedal_pos >= base_pedal_position){
-		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-35*pedal_pos+1457;
+		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-35*pedal_pos+1500;
 		    }
 		    else next_rpm=min_rpm;
 		    
