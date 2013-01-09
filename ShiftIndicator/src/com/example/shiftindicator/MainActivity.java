@@ -3,6 +3,7 @@ package com.example.shiftindicator;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
@@ -211,12 +212,6 @@ public class MainActivity extends Activity {
 			            mShiftCalc.setText("Shift!!");
 			        }
 			    }); 
-		    	try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		    }
 		    
 		    else MainActivity.this.runOnUiThread(new Runnable() {
