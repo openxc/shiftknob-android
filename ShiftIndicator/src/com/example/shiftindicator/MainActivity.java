@@ -238,7 +238,6 @@ public class MainActivity extends Activity {
 		    	return;
 		    }
 		    
-		    //check if the pedal position is above the minimum threshold.
 		    //if the pedal position is above the minimum threshold, then the 
 		    //driver is thought to be accelerating heavily and thus the shift indication
 		    //should be sent at a higher RPM:
