@@ -73,6 +73,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Log.i(TAG, "Shift Indicator created");
+		
 		Intent intent = new Intent(this, VehicleManager.class);
 	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	    mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
@@ -249,9 +250,7 @@ public class MainActivity extends Activity {
 		    
 		    else next_rpm=min_rpm;
 		    
-		    //check to see if the rpm in the next gear is high enough given
-		    // the vehicle_speed and ratio of the next gear:
-		    if (vehicle_speed > next_rpm/next_ratio){
+		    if (next_rpm < vehicle_speed*next_ratio){
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
 			            mShiftCalc.setText("Shift!!");
