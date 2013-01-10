@@ -31,7 +31,10 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
+	private static String TAG = "ShiftIndicator";
 	private VehicleManager mVehicleManager;
+	private boolean mIsBound;
+	
 	private TextView mVehicleSpeedView;
 	private TextView mEngineSpeedView;
 	private TextView mShiftIndicator;
@@ -69,6 +72,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		Log.i(TAG, "Shift Indicator created");
 		Intent intent = new Intent(this, VehicleManager.class);
 	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	    mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
@@ -100,19 +104,17 @@ public class MainActivity extends Activity {
 	    // Called when the connection with the service is established
 	    public void onServiceConnected(ComponentName className,
 	            IBinder service) {
-	        Log.i("openxc", "Bound to VehicleManager");
+	    	Log.i(TAG, "Bound to VehicleManager");
 	        mVehicleManager = ((VehicleManager.VehicleBinder)service).getService();
 	        try {
 				mVehicleManager.addListener(VehicleSpeed.class, mSpeedListener);
 				mVehicleManager.addListener(EngineSpeed.class, mEngineListener);
 				mVehicleManager.addListener(AcceleratorPedalPosition.class, mPedalListener);
 				mVehicleManager.addListener(ShiftRecommendation.class, mShiftRecommendation);
-			} catch (VehicleServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnrecognizedMeasurementTypeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch(VehicleServiceException e) {
+           	 	Log.w(TAG, "Couldn't add listeners for measurements", e);
+			} catch(UnrecognizedMeasurementTypeException e) {
+           	 	Log.w(TAG, "Couldn't add listeners for measurements", e);
 			}
 	        
 	        URI mTraceFile;
@@ -127,12 +129,15 @@ public class MainActivity extends Activity {
 				e.printStackTrace();
 			}
 	        //mVehicleManager.addSource(mTraceSource);
+			
+			mIsBound = true;
 	    }
 
 	    // Called when the connection with the service disconnects unexpectedly
 	    public void onServiceDisconnected(ComponentName className) {
-	        Log.w("openxc", "VehicleService disconnected unexpectedly");
-	        mVehicleManager = null;
+	    	Log.w(TAG, "VehicleService disconnected unexpectedly");
+            mVehicleManager = null;
+            mIsBound = false;
 	    }
 	};
 	
