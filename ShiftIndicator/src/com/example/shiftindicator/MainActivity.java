@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 
+import jp.ksksue.driver.serial.FTDriver;
+
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;
@@ -18,11 +20,19 @@ import com.openxc.sources.trace.TraceVehicleDataSource;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbEndpoint;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
@@ -35,6 +45,20 @@ public class MainActivity extends Activity {
 	private VehicleManager mVehicleManager;
 	private boolean mIsBound;
 	
+	//USB setup:
+    public static final String ACTION_USB_PERMISSION =
+            "com.ford.openxc.USB_PERMISSION";
+    static boolean mSerialStarted = false;
+    static FTDriver mSerialPort = null;
+    
+    private PendingIntent mPermissionIntent;
+    UsbManager mUsbManager = null;
+    UsbDevice mGaugeDevice = null;
+    UsbDeviceConnection mGaugeConnection = null;
+    UsbEndpoint mEndpointIn = null;
+    UsbEndpoint mEndpointOut = null;
+    UsbInterface mGaugeInterface = null;
+    
 	private TextView mVehicleSpeedView;
 	private TextView mEngineSpeedView;
 	private TextView mShiftIndicator;
@@ -85,6 +109,24 @@ public class MainActivity extends Activity {
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
 	    
+	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+	    
+	    mPermissionIntent = PendingIntent.getBroadcast(this, 0,
+                new Intent(ACTION_USB_PERMISSION), 0);
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        this.registerReceiver(mBroadcastReceiver, filter);
+        
+        if(mSerialPort == null){
+            mSerialPort = new FTDriver(mUsbManager);
+            mSerialPort.setPermissionIntent(mPermissionIntent);
+            mSerialStarted = mSerialPort.begin(9600);
+            if (!mSerialStarted)
+            {
+                Log.d(TAG, "mSerialPort.begin() failed.");
+            } else{
+                Log.d(TAG, "mSerialPort.begin() success!.");
+            }
+        }
 	}
 
 	@Override
@@ -129,7 +171,7 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        //mVehicleManager.addSource(mTraceSource);
+	        mVehicleManager.addSource(mTraceSource);
 			
 			mIsBound = true;
 	    }
@@ -293,14 +335,46 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
-		        		//mLayout.setBackgroundColor(Color.WHITE); // flash the background when the driver should shift
 		        	}
 		        	else {
-		        		//mLayout.setBackgroundColor(Color.BLACK);
 		        		mShiftIndicator.setText("");
 		        	}
 		        }
 		    });
 		}
 	};
+	
+	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                UsbDevice device = (UsbDevice) intent.getParcelableExtra(
+                        UsbManager.EXTRA_DEVICE);
+
+                if(intent.getBooleanExtra(
+                            UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    mSerialStarted = mSerialPort.begin(9600);
+                } 
+                
+                else {
+                    Log.i(TAG, "User declined permission for device " + device);
+                }
+            }
+        }
+    };
+    
+    public void onExit(View view){
+
+        if (mSerialPort != null){
+            mSerialPort.end();
+        }
+        if(mIsBound) {
+            Log.i(TAG, "Unbinding from vehicle service before exit");
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+        finish();
+        System.exit(0);
+    }
 }
