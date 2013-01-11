@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
         if(mSerialPort == null){
             mSerialPort = new FTDriver(mUsbManager);
             mSerialPort.setPermissionIntent(mPermissionIntent);
-            mSerialStarted = mSerialPort.begin(9600);
+            mSerialStarted = mSerialPort.begin(115200);
             if (!mSerialStarted)
             {
                 Log.d(TAG, "mSerialPort.begin() failed.");
@@ -133,10 +133,13 @@ public class MainActivity extends Activity {
 	}
 
 	public void sendToArduino(View view){
-		String outString = "12345";
+		send2Arduino();
+	}
+	public void send2Arduino(){
+		String outString = "12345"+'E';
 		char[] outMessage = outString.toCharArray();
         byte outBuffer[] = new byte[128];
-        for(int i=0; i<"12345".length(); i++)
+        for(int i=0; i<outString.length(); i++)
         {
             outBuffer[i] = (byte)outMessage[i];
         }
@@ -354,6 +357,7 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
+		        		send2Arduino();
 		        	}
 		        	else {
 		        		mShiftIndicator.setText("");

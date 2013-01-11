@@ -101,9 +101,11 @@
         android:id="@+id/send_serial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/pedal_position"
-        android:layout_alignLeft="@+id/gear_position"
+        android:layout_above="@+id/shift_indicator"
+        android:layout_below="@+id/gear_position"
+        android:layout_toLeftOf="@+id/engine_speed_label"
+        android:onClick="sendToArduino"
         android:text="Send Serial" 
-        android:onClick="sendToArduino"/>
+        android:background="#FFFFFF"/>
 
 </RelativeLayout>
