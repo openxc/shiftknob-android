@@ -97,4 +97,13 @@
         android:textSize="90sp"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/send_serial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/pedal_position"
+        android:layout_alignLeft="@+id/gear_position"
+        android:text="Send Serial" 
+        android:onClick="sendToArduino"/>
+
 </RelativeLayout>

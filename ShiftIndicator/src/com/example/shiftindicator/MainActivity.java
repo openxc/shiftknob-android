@@ -37,6 +37,7 @@ import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -65,6 +66,7 @@ public class MainActivity extends Activity {
 	private TextView mShiftCalc;
 	private TextView mPedalView;
 	private TextView mGearPosition;
+	private Button mSerialButton;
 	private View mLayout;
 	private TraceVehicleDataSource mTraceSource;
 	private int engine_speed;
@@ -106,6 +108,7 @@ public class MainActivity extends Activity {
 	    mShiftCalc = (TextView) findViewById(R.id.shift_calculated);
 	    mPedalView = (TextView) findViewById(R.id.pedal_position);
 	    mGearPosition = (TextView) findViewById(R.id.gear_position);
+	    mSerialButton = (Button) findViewById(R.id.send_serial);
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
 	    
@@ -129,6 +132,10 @@ public class MainActivity extends Activity {
         }
 	}
 
+	public void sendToArduino(View view){
+		
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -183,6 +190,7 @@ public class MainActivity extends Activity {
             mIsBound = false;
 	    }
 	};
+	
 	
 	VehicleSpeed.Listener mSpeedListener = new VehicleSpeed.Listener() {
 		public void receive(Measurement measurement) {
