@@ -133,7 +133,18 @@ public class MainActivity extends Activity {
 	}
 
 	public void sendToArduino(View view){
-		
+		String outString = "12345";
+		char[] outMessage = outString.toCharArray();
+        byte outBuffer[] = new byte[128];
+        for(int i=0; i<"12345".length(); i++)
+        {
+            outBuffer[i] = (byte)outMessage[i];
+        }
+        try {
+        	mSerialPort.write(outBuffer, outString.length());
+        } catch (Exception e) {
+            Log.d(TAG, "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
+        }
 	}
 	
 	@Override
