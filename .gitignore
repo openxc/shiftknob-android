@@ -2,8 +2,8 @@ target
 bin
 gen
 .DS_Store
-/com/
 reference
+/com/
 *.asc
 .settings
 .project
