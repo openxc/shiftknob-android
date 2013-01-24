@@ -4,4 +4,7 @@ gen
 .DS_Store
 /com/
 reference
-*/.classpath
+*.asc
+.settings
+.project
+.classpath
