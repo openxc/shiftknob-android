@@ -105,7 +105,7 @@
         android:layout_below="@+id/gear_position"
         android:layout_toLeftOf="@+id/engine_speed_label"
         android:onClick="sendToArduino"
-        android:text="Send Serial" 
+        android:text="@string/button_text" 
         android:background="#FFFFFF"/>
 
 </RelativeLayout>

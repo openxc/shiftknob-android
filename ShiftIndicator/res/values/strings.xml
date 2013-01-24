@@ -7,4 +7,5 @@
 	<string name="vehicle_speed">Speed:</string>
 	<string name="engine_speed">RPM:</string>
 	<string name="pedal_position">Pedal %:</string>
+	<string name="button_text">Send Signal</string>
 </resources>
