@@ -79,20 +79,20 @@ public class MainActivity extends Activity {
 	private int min_rpm = 1300;
 	
 //	FIGO RATIOS rpm/speed
-	private int ratio1 = 140;
-	private int ratio2 = 75;
-	private int ratio3 = 50;
-	private int ratio4 = 37;
-	private int ratio5 = 30;
-    private int ratio6 = 1; // does not exist in Figo
+//	private int ratio1 = 140;
+//	private int ratio2 = 75;
+//	private int ratio3 = 50;
+//	private int ratio4 = 37;
+//	private int ratio5 = 30;
+//  private int ratio6 = 1; // does not exist in Figo
 	
 //	Focus ST RATIOS rpm/speed:
-/*	private int ratio1 = 114;
+	private int ratio1 = 114;
 	private int ratio2 = 69;
 	private int ratio3 = 46;
 	private int ratio4 = 36;
 	private int ratio5 = 28;
-	private int ratio6 = 23;*/
+	private int ratio6 = 23;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -245,7 +245,7 @@ public class MainActivity extends Activity {
 			        }
 			    });
 		    }
-		    else if((ratio2*1.04) > ratio && (ratio2*.96) < ratio){
+		    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
 		    	next_ratio=ratio3;
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
@@ -253,7 +253,7 @@ public class MainActivity extends Activity {
 			        }
 			    });
 		    }
-		    else if((ratio3*1.04) > ratio && (ratio3*.96) < ratio){
+		    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
 		    	next_ratio=ratio4;
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
@@ -261,7 +261,7 @@ public class MainActivity extends Activity {
 			        }
 			    });
 		    }
-		    else if((ratio4*1.04) > ratio && (ratio4*.96) < ratio){
+		    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
 		    	next_ratio=ratio5;
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
@@ -269,7 +269,7 @@ public class MainActivity extends Activity {
 			        }
 			    });
 		    }
-		    else if((ratio5*1.04) > ratio && (ratio5*.96) < ratio){
+		    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
 		    	next_ratio=ratio6;
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
@@ -277,7 +277,7 @@ public class MainActivity extends Activity {
 			        }
 			    });
 		    }
-		    else if((ratio6*1.04) > ratio && (ratio6*.96) < ratio){
+		    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
 			            mGearPosition.setText("6");
