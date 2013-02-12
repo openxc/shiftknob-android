@@ -134,9 +134,6 @@ public class MainActivity extends Activity {
         }
 	}
 
-	public void sendToArduino(View view){
-		send2Arduino();
-	}
 	public void send2Arduino(){
 		String outString = "12345"+'E';
 		char[] outMessage = outString.toCharArray();
@@ -188,14 +185,11 @@ public class MainActivity extends Activity {
 				mTraceFile = new URI("file:///sdcard/com.openxc/shiftIndicateTraceboolean.json");
 				mTraceSource = new TraceVehicleDataSource(MainActivity.this, mTraceFile);
 			} catch (URISyntaxException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				Log.w(TAG, "URI syntax error on tracefile", e1);
 			} catch (DataSourceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.w(TAG, "Data source error while trying to add trace file", e);
 			}
 	        mVehicleManager.addSource(mTraceSource);
-			
 			mIsBound = true;
 	    }
 
@@ -241,58 +235,30 @@ public class MainActivity extends Activity {
 		    
 		    if((ratio1*1.04) > ratio && (ratio1*.96) < ratio){
 		    	next_ratio=ratio2;
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("1");
-			        }
-			    });
+		    	updateGear("1");
 		    }
 		    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
 		    	next_ratio=ratio3;
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("2");
-			        }
-			    });
+		    	updateGear("2");
 		    }
 		    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
 		    	next_ratio=ratio4;
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("3");
-			        }
-			    });
+		    	updateGear("3");
 		    }
 		    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
 		    	next_ratio=ratio5;
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("4");
-			        }
-			    });
+		    	updateGear("4");
 		    }
 		    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
 		    	next_ratio=ratio6;
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("5");
-			        }
-			    });
+		    	updateGear("5");
 		    }
 		    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("6");
-			        }
-			    });
+		    	updateGear("6");
 		    	cancelShift(currentTime);
 		    }
 		    else {
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mGearPosition.setText("N");
-			        }
-			    });
+		    	updateGear("N");
 		    	cancelShift(currentTime); 
 		    	return;
 		    }
@@ -327,6 +293,13 @@ public class MainActivity extends Activity {
 		    else cancelShift(currentTime);
 		}
 
+		private void updateGear(final String s) {
+			MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		            mGearPosition.setText(s);
+		        }
+		    });
+		}
 		private void cancelShift(long t) {
 			// only cancel the shift indication after it's been on the screen for 1000ms
 			if (t-shiftTime>1000){
