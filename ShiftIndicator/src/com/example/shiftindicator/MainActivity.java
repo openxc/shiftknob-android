@@ -128,6 +128,8 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "mSerialPort.begin() failed.");
             } else{
                 Log.d(TAG, "mSerialPort.begin() success!.");
+                byte[] b = new byte[2];
+				mSerialPort.write(b);
             }
         }
 	}
