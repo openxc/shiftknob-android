@@ -1,9 +1,19 @@
-//Zachary Nelson
-//znelson1@ford.com
-//This program uses a 74hc595 shift register and a
-//7-sement display to display the numbers 0 - 9. It
-//is used to test future implementations of the 
-//display control.
+/*
+-------------------------------------------------
+| Zachary Nelson
+| znelson1@ford.com
+| 
+| This program uses a 74hc595 shift register and a
+| 7-sement display to display the numbers 0 - 9. It
+| is used to test future implementations of the 
+| display control.
+| 
+| USB serial support has been added to test USB 
+| connections with an Android host device.
+---------------------------------------------------
+*/
+
+
 
 //Pin connected to ST_CP of 74HC595
 int latchPin = 8;
