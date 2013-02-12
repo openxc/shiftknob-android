@@ -54,8 +54,9 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+  pinMode(13, OUTPUT);
   
-  //Serial.begin(115200);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -65,12 +66,22 @@ void loop() {
     if (c == 6) {
       c = 0;
     }
-    delay(100);
+    delay(50);
   }
   
   if (stringComplete) {
-    int gear_pos = (inputString[1] - '0');
-    sendDigit(all_digits[gear_pos]);
+    int index = inputString.length()-2;
+    
+    if (inputString[inputString.length()-1] == '>') {
+      int gear_pos = (inputString[index] - '0');
+      sendDigit(all_digits[gear_pos]);
+    }
+    
+    if (inputString[inputString.length()-1] == ')') {
+      digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+    }
     inputString = "";
     stringComplete = false;
   }
@@ -91,7 +102,7 @@ void serialEvent() {
   while (Serial.available()) {
     char inChar = (char)Serial.read();
     inputString += inChar;
-    if (inChar == '>') {
+    if (inChar == '>' || inChar == ')') {
       stringComplete = true;
     }
   }

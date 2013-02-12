@@ -134,8 +134,7 @@ public class MainActivity extends Activity {
         }
 	}
 
-	public void send2Arduino(){
-		String outString = "12345"+'E';
+	public void send2Arduino(String outString){
 		char[] outMessage = outString.toCharArray();
         byte outBuffer[] = new byte[128];
         for(int i=0; i<outString.length(); i++)
@@ -235,30 +234,30 @@ public class MainActivity extends Activity {
 		    
 		    if((ratio1*1.04) > ratio && (ratio1*.96) < ratio){
 		    	next_ratio=ratio2;
-		    	updateGear("1");
+		    	updateGear(1);
 		    }
 		    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
 		    	next_ratio=ratio3;
-		    	updateGear("2");
+		    	updateGear(2);
 		    }
 		    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
 		    	next_ratio=ratio4;
-		    	updateGear("3");
+		    	updateGear(3);
 		    }
 		    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
 		    	next_ratio=ratio5;
-		    	updateGear("4");
+		    	updateGear(4);
 		    }
 		    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
 		    	next_ratio=ratio6;
-		    	updateGear("5");
+		    	updateGear(5);
 		    }
 		    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
-		    	updateGear("6");
+		    	updateGear(6);
 		    	cancelShift(currentTime);
 		    }
 		    else {
-		    	updateGear("N");
+		    	updateGear(0);
 		    	cancelShift(currentTime); 
 		    	return;
 		    }
@@ -293,12 +292,19 @@ public class MainActivity extends Activity {
 		    else cancelShift(currentTime);
 		}
 
-		private void updateGear(final String s) {
+
+		private void updateGear(final int g) {
 			MainActivity.this.runOnUiThread(new Runnable() {
-		        public void run() {
-		            mGearPosition.setText(s);
-		        }
-		    });
+				public void run() {
+					mGearPosition.setText(Integer.toString(g));
+				}
+			});
+			
+			if (g != currentGear){
+				String s = '<'+Integer.toString(g)+'>';
+				send2Arduino(s);
+			}
+			currentGear = g;
 		}
 		private void cancelShift(long t) {
 			// only cancel the shift indication after it's been on the screen for 1000ms
@@ -325,6 +331,7 @@ public class MainActivity extends Activity {
 		}
 	};
 	
+	boolean justShifted;
 	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
 		public void receive(Measurement measurement) {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
@@ -332,10 +339,15 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
-		        		send2Arduino();
+		        		if (!justShifted){
+		        			send2Arduino('('+"1"+')');
+		        		}
+		        		justShifted = true;
 		        	}
+		        	
 		        	else {
 		        		mShiftIndicator.setText("");
+		        		justShifted = false;
 		        	}
 		        }
 		    });
