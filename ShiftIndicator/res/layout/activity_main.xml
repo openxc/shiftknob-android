@@ -97,17 +97,6 @@
         android:textSize="90sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/send_serial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/shift_indicator"
-        android:layout_below="@+id/gear_position"
-        android:layout_toLeftOf="@+id/engine_speed_label"
-        android:onClick="sendToArduino"
-        android:text="@string/button_text" 
-        android:background="#FFFFFF"/>
-
     <SeekBar
         android:id="@+id/led_color"
         android:layout_width="300dp"
