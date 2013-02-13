@@ -51,7 +51,6 @@ int greenLED = 11; //pwm
 String inputString = "";
 boolean stringComplete = false;
 boolean USB_connected = false;
-int c = 0;
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -69,12 +68,11 @@ void setup() {
 
 void loop() {
   if (!USB_connected) {
-    sendDigit(circle[c]);
-    c++;
-    if (c == 6) {
-      c = 0;
+    for (int c = 0; c < 6; c++) {
+      sendDigit(circle[c]);
+      delay(50);
     }
-    delay(50);
+    sendDigit(all_digits[0]);
   }
   
   if (stringComplete) {
