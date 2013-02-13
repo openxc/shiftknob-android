@@ -37,11 +37,13 @@ int digitN = 0b11110111; // "-" used for nuetral
 // if you want to add in the decimal point simply subtract 0b10000000 from each number
 
 //Pin connected to ST_CP of 74HC595
-int latchPin = 8;
+int latchPin = 7;
 //Pin connected to SH_CP of 74HC595
-int clockPin = 12;
+int clockPin = 8;
 ////Pin connected to DS of 74HC595
-int dataPin = 11;
+int dataPin = 4;
+
+int motorPin = 5;
 
 String inputString = "";
 boolean stringComplete = false;
@@ -54,7 +56,7 @@ void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
-  pinMode(13, OUTPUT);
+  pinMode(motorPin, OUTPUT);
   
   Serial.begin(115200);
 }
@@ -78,9 +80,9 @@ void loop() {
     }
     
     if (inputString[inputString.length()-1] == ')') {
-      digitalWrite(13, HIGH);
+      analogWrite(motorPin, 255);
       delay(500);
-      digitalWrite(13, LOW);
+      analogWrite(motorPin, 0);
     }
     inputString = "";
     stringComplete = false;
