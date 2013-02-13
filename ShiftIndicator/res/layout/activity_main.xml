@@ -98,8 +98,8 @@
         android:textStyle="bold" />
 
     <SeekBar
-        android:id="@+id/led_color"
-        android:layout_width="300dp"
+        android:id="@+id/led_bar"
+        android:layout_width="500dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
         android:layout_below="@+id/shift_calculated"

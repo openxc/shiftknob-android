@@ -44,12 +44,14 @@ int clockPin = 8;
 int dataPin = 4;
 
 int motorPin = 5;
+int redLED = 9; //pwm
+int blueLED = 10; //pwm
+int greenLED = 11; //pwm
 
 String inputString = "";
 boolean stringComplete = false;
 boolean USB_connected = false;
 int c = 0;
-
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -57,6 +59,10 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
   pinMode(motorPin, OUTPUT);
+  
+  pinMode(redLED, OUTPUT);
+  pinMode(blueLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
   
   Serial.begin(115200);
 }
@@ -79,11 +85,39 @@ void loop() {
       sendDigit(all_digits[gear_pos]);
     }
     
-    if (inputString[inputString.length()-1] == ')') {
+    if (inputString[inputString.length()-1] == ']') {
       analogWrite(motorPin, 255);
       delay(500);
       analogWrite(motorPin, 0);
     }
+    
+    if (inputString[inputString.length()-1] == ')') {
+      int LED_value = 0;
+      int scale = 1;
+      for (int i = inputString.length()-2; i > 0; i--) {
+        LED_value += (inputString[i] - '0')*scale;
+        scale *= 10;
+      }
+      
+      if (LED_value >= 0 && LED_value <= 85) {
+        analogWrite(redLED, -1*LED_value*255/85+255);
+        analogWrite(greenLED, LED_value*255/85);
+        analogWrite(blueLED, 0);
+      }
+      
+      if (LED_value > 85 && LED_value <= 170) {
+        analogWrite(greenLED, -1*(LED_value-85)*255/85+255);
+        analogWrite(blueLED, (LED_value-85)*255/85);
+        analogWrite(redLED, 0);
+      }
+      
+      if (LED_value > 170 && LED_value <= 255) {
+        analogWrite(blueLED, -1*(LED_value-170)*255/85+255);
+        analogWrite(redLED, (LED_value-170)*255/85);
+        analogWrite(greenLED, 0);
+      } 
+    }
+    
     inputString = "";
     stringComplete = false;
   }
@@ -104,7 +138,7 @@ void serialEvent() {
   while (Serial.available()) {
     char inChar = (char)Serial.read();
     inputString += inChar;
-    if (inChar == '>' || inChar == ')') {
+    if (inChar == '>' || inChar == ']' || inChar == ')') {
       stringComplete = true;
     }
   }

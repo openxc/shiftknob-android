@@ -36,6 +36,8 @@ import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -64,6 +66,7 @@ public class MainActivity extends Activity {
 	private TextView mShiftCalc;
 	private TextView mPedalView;
 	private TextView mGearPosition;
+	private SeekBar mLEDbar;
 	private View mLayout;
 	private TraceVehicleDataSource mTraceSource;
 	private int engine_speed;
@@ -107,6 +110,22 @@ public class MainActivity extends Activity {
 	    mGearPosition = (TextView) findViewById(R.id.gear_position);
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
+	    
+	    mLEDbar = (SeekBar) findViewById(R.id.led_bar);
+	    mLEDbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				String s = Integer.toString(progress*255/100);
+				send2Arduino('('+s+')');
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			public void onStopTrackingTouch(SeekBar seekBar) {			
+			}
+
+	    });
 	    
 	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 	    
@@ -210,6 +229,8 @@ public class MainActivity extends Activity {
 		}
 	};
 
+	int next_ratio=1;
+	
 	EngineSpeed.Listener mEngineListener = new EngineSpeed.Listener() {
 		public void receive(Measurement measurement) {
 		    final EngineSpeed updated_value = (EngineSpeed) measurement;
@@ -221,11 +242,9 @@ public class MainActivity extends Activity {
 		    });
 		    
 		    // Gear position calculation
-		    
 		    // First calculate gear based on ratio of rpm to speed
 		    if(vehicle_speed==0) vehicle_speed = 1;
 		    double ratio = engine_speed/vehicle_speed;
-		    int next_ratio=1;
 		    long currentTime = new Date().getTime();
 		    
 		    if((ratio1*1.04) > ratio && (ratio1*.96) < ratio){
@@ -279,7 +298,7 @@ public class MainActivity extends Activity {
 		    if (next_rpm < vehicle_speed*next_ratio){
 		    	MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
-			            mShiftCalc.setText("Shift!!");
+			            //mShiftCalc.setText("Shift!!");
 			        }
 			    }); 
 		    	shiftTime = new Date().getTime();
@@ -336,7 +355,7 @@ public class MainActivity extends Activity {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
 		        		if (!justShifted){
-		        			send2Arduino('('+"1"+')');
+		        			send2Arduino('['+"1"+']');
 		        		}
 		        		justShifted = true;
 		        	}
