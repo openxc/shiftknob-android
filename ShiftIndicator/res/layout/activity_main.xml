@@ -3,8 +3,8 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" 
-    android:background="#000000" >
+    android:background="#000000"
+    tools:context=".MainActivity" >
 
     <TextView
         android:id="@+id/vehicle_speed"
@@ -107,5 +107,13 @@
         android:onClick="sendToArduino"
         android:text="@string/button_text" 
         android:background="#FFFFFF"/>
+
+    <SeekBar
+        android:id="@+id/led_color"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_below="@+id/shift_calculated"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>
