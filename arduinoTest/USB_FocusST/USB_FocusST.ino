@@ -44,6 +44,8 @@ int clockPin = 8;
 int dataPin = 4;
 
 int motorPin = 5;
+long motor_time = 500; //number of milliseconds the motor vibrates
+
 int redLED = 9; //pwm
 int blueLED = 10; //pwm
 int greenLED = 11; //pwm
@@ -51,6 +53,7 @@ int greenLED = 11; //pwm
 String inputString = "";
 boolean stringComplete = false;
 boolean USB_connected = false;
+unsigned long time = 0;
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -67,6 +70,9 @@ void setup() {
 }
 
 void loop() {
+  
+  if (millis() - time >= motor_time) analogWrite(motorPin, 0);
+  
   if (!USB_connected) {
     for (int c = 0; c < 6; c++) {
       sendDigit(circle[c]);
@@ -85,8 +91,7 @@ void loop() {
     
     if (inputString[inputString.length()-1] == ']') {
       analogWrite(motorPin, 255);
-      delay(500);
-      analogWrite(motorPin, 0);
+      time = millis();
     }
     
     if (inputString[inputString.length()-1] == ')') {
