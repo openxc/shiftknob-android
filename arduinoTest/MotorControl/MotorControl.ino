@@ -1,4 +1,4 @@
-int motorPin = 3;
+int motorPin = 5;
 
 void setup() {
   pinMode(motorPin, OUTPUT);
@@ -6,7 +6,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly: 
-  analogWrite(motorPin, 255);
+  digitalWrite(motorPin, HIGH);
   delay(2000);
   analogWrite(motorPin, 0);
   delay(1000);

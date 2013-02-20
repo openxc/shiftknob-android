@@ -78,7 +78,6 @@ void loop() {
       sendDigit(circle[c]);
       delay(50);
     }
-    sendDigit(all_digits[0]);
   }
   
   if (stringComplete) {
@@ -90,7 +89,7 @@ void loop() {
     }
     
     if (inputString[inputString.length()-1] == ']') {
-      analogWrite(motorPin, 255);
+      analogWrite(motorPin, 200);
       time = millis();
     }
     

@@ -77,22 +77,23 @@ public class MainActivity extends Activity {
 	private int currentGear;
 	private double base_pedal_position = 15.0;
 	private int min_rpm = 1300;
+	boolean justShifted;
 	
 //	FIGO RATIOS rpm/speed
-//	private int ratio1 = 140;
-//	private int ratio2 = 75;
-//	private int ratio3 = 50;
-//	private int ratio4 = 37;
-//	private int ratio5 = 30;
-//  private int ratio6 = 1; // does not exist in Figo
+	private int ratio1 = 140;
+	private int ratio2 = 75;
+	private int ratio3 = 50;
+	private int ratio4 = 37;
+	private int ratio5 = 30;
+	private int ratio6 = 1; // does not exist in Figo
 	
 //	Focus ST RATIOS rpm/speed:
-	private int ratio1 = 114;
-	private int ratio2 = 69;
-	private int ratio3 = 46;
-	private int ratio4 = 36;
-	private int ratio5 = 28;
-	private int ratio6 = 23;
+//	private int ratio1 = 114;
+//	private int ratio2 = 69;
+//	private int ratio3 = 46;
+//	private int ratio4 = 36;
+//	private int ratio5 = 28;
+//	private int ratio6 = 23;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,8 +144,8 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "mSerialPort.begin() failed.");
             } else{
                 Log.d(TAG, "mSerialPort.begin() success!.");
-                byte[] b = new byte[2];
-				mSerialPort.write(b);
+                String s = '<'+"0"+'>';
+				send2Arduino(s);
             }
         }
 	}
@@ -203,7 +204,7 @@ public class MainActivity extends Activity {
 			} catch (DataSourceException e) {
 				Log.w(TAG, "Data source error while trying to add trace file", e);
 			}
-	        mVehicleManager.addSource(mTraceSource);
+//	        mVehicleManager.addSource(mTraceSource);
 			mIsBound = true;
 	    }
 
@@ -296,11 +297,18 @@ public class MainActivity extends Activity {
 		    else next_rpm=min_rpm;
 		    
 		    if (next_rpm < vehicle_speed*next_ratio){
-		    	MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            //mShiftCalc.setText("Shift!!");
-			        }
-			    }); 
+		    	
+		    	if (!justShifted){
+        			send2Arduino('['+"1"+']');
+        			MainActivity.this.runOnUiThread(new Runnable() {
+    			        public void run() {
+    			            mShiftCalc.setText("Shift!!");
+    			        }
+    			    });
+        		}
+		    	
+        		justShifted = true;
+		    	 
 		    	shiftTime = new Date().getTime();
 		    }
 		    
@@ -324,6 +332,7 @@ public class MainActivity extends Activity {
 		private void cancelShift(long t) {
 			// only cancel the shift indication after it's been on the screen for 1000ms
 			if (t-shiftTime>1000){
+				justShifted = false;
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
 						mShiftCalc.setText("");		
@@ -346,7 +355,6 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	boolean justShifted;
 	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
 		public void receive(Measurement measurement) {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
