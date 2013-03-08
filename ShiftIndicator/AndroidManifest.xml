@@ -6,8 +6,10 @@
 
     <uses-sdk
         android:minSdkVersion="12"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="17" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+        
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -18,12 +20,11 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingsActivity" />
         <service android:name="com.openxc.VehicleManager"/>
     </application>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 </manifest>

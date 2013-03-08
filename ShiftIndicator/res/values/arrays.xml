@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="data_types">
+        <item name="trace">Use a trace file</item>
+        <item name="vehicle_interface">Use a Vehicle Interface</item>
+    </string-array>
+    
+    <string-array name="data_values">
+        <item name="trace">trace</item>
+        <item name="vehicle_interface">vehicle_interface</item>
+    </string-array>
+    
+    <string-array name="mode_types">
+        <item name="fuel_economy">Fuel Economy</item>
+        <item name="performance">Performance</item>
+    </string-array>
+    
+    <string-array name="mode_values">
+        <item name="performance">performance</item>
+        <item name="fuel_economy">fuel_economy</item>
+    </string-array>
+    
+</resources>

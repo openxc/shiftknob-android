@@ -19,6 +19,7 @@ import com.openxc.sources.trace.TraceVehicleDataSource;
 
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -27,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -35,6 +37,8 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -45,6 +49,8 @@ public class MainActivity extends Activity {
 	private static String TAG = "ShiftIndicator";
 	private VehicleManager mVehicleManager;
 	private boolean mIsBound;
+	
+	private SharedPreferences sharedPrefs;
 	
 	//USB setup:
     public static final String ACTION_USB_PERMISSION =
@@ -100,6 +106,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Log.i(TAG, "Shift Indicator created");
+		
+		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		Intent intent = new Intent(this, VehicleManager.class);
 	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -167,10 +175,25 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		MenuInflater inflater = getMenuInflater();
+		getMenuInflater().inflate(R.menu.settings, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i(TAG, "Option Selected "+item.getItemId());
+        switch (item.getItemId()) {
+        case R.id.settings:
+            startActivity(new Intent(this, SettingsActivity.class));
+            break;
+        case R.id.close:
+            System.exit(0);
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    
 	public void onPause() {
 	    super.onPause();
 	    Log.i("openxc", "Unbinding from vehicle service");
@@ -204,8 +227,8 @@ public class MainActivity extends Activity {
 			} catch (DataSourceException e) {
 				Log.w(TAG, "Data source error while trying to add trace file", e);
 			}
-	        mVehicleManager.addSource(mTraceSource);
-			mIsBound = true;
+	        //mVehicleManager.addSource(mTraceSource);
+			//mIsBound = true;
 	    }
 
 	    // Called when the connection with the service disconnects unexpectedly

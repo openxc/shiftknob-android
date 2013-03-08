@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<PreferenceCategory
+	    android:title="@string/pref_operation_title"
+	    android:summary="@string/pref_operation_summary">
+	    
+	    <SwitchPreference 
+	        android:key="pref_power_key"
+	        android:title="@string/pref_power_title"/>
+	    <SwitchPreference
+	        android:key="pref_operation_mode_key"
+	        android:title="@string/pref_mode_title" 
+	        android:summary="@string/pref_mode_summary"
+	        android:switchTextOn="@string/pref_mode_off"
+	        android:switchTextOff="@string/pref_mode_on"
+	        android:defaultValue="true"/>
+	    <CheckBoxPreference 
+	        android:key="pref_haptic_feedback_key"
+	        android:title="@string/pref_haptic_title"/>
+	    <CheckBoxPreference 
+	        android:key="pref_audio_feedback_key"
+	        android:title="@string/pref_audio_title"/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+	    android:title="@string/pref_datasource_title">
+	    <CheckBoxPreference
+	        android:key="pref_data_source"
+	        android:title="@string/pref_data_title"
+	        android:summary="@string/pref_data_summary"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>
