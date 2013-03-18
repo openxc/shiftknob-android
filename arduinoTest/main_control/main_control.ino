@@ -13,10 +13,6 @@
 ---------------------------------------------------
 */ 
 
-//libraries used:
-#include <PinChangeInt.h>
-#include <PinChangeIntConfig.h>
-
 // pin definitions
 int motorPin = 5; //pwm
 int buttonPin = 12;
@@ -65,8 +61,6 @@ void setup(){
   digitalWrite(redLED, LOW);
   digitalWrite(blueLED, LOW);
   digitalWrite(greenLED, LOW);
-  
-  PCintPort::attachInterrupt(buttonPin, onClick, FALLING);
   
   Serial.begin(115200);
 }
