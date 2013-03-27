@@ -47,7 +47,8 @@ int clockPin = 8;
 int dataPin = 4;
 
 int motorPin = 5;
-long motor_time = 500; //number of milliseconds the motor vibrates
+long motor_on = 200; //number of milliseconds the motor vibrates
+long motor_off = 100; //pause between pulses
 
 int buttonPin = 2;
 
@@ -59,6 +60,11 @@ String inputString = "";
 boolean stringComplete = false;
 boolean USB_connected = false;
 unsigned long time = 0;
+
+int motorCount = 2;
+int motorPulse = 2;
+volatile int motorState = LOW;
+boolean motorCommand = false;
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -82,7 +88,30 @@ void setup() {
 
 void loop() {
   
-  if (millis() - time >= motor_time) analogWrite(motorPin, 0);
+  //handle motor control
+  if (motorState == HIGH && (millis() - time) >= motor_on && motorCommand) {
+    motorState = LOW;
+    digitalWrite(motorPin, motorState);
+    time = millis();
+  }
+  
+  if (motorState == LOW && (millis() - time) >= motor_off 
+                          && motorPulse > 0 && motorCommand) {
+    motorState = HIGH;
+    digitalWrite(motorPin, motorState);
+    motorPulse -= 1;
+    time = millis();
+    
+    if (motorPulse <= 0) {
+      motorCommand = false;
+    }
+  }
+  
+  if (millis()-time >= motor_on && !motorCommand) {
+    motorState = LOW;
+    digitalWrite(motorPin, motorState);
+    motorPulse = motorCount;
+  }
   
   if (!USB_connected) {
     for (int c = 0; c < 6; c++) {
@@ -100,7 +129,10 @@ void loop() {
     }
     
     if (inputString[inputString.length()-1] == ']') {
-      analogWrite(motorPin, 200);
+      motorState = HIGH;
+      motorCommand = true;
+      digitalWrite(motorPin, motorState);
+      motorPulse -= 1;
       time = millis();
     }
     
