@@ -81,17 +81,27 @@ public class MainActivity extends Activity {
 	private long shiftTime;
 	
 	private int currentGear;
-	private double base_pedal_position = 15.0;
-	private int min_rpm = 1300;
 	boolean justShifted;
 	
 //	FIGO RATIOS rpm/speed
-	private int ratio1 = 140;
-	private int ratio2 = 75;
-	private int ratio3 = 50;
-	private int ratio4 = 37;
-	private int ratio5 = 30;
-	private int ratio6 = 1; // does not exist in Figo
+//	private int ratio1 = 140;
+//	private int ratio2 = 75;
+//	private int ratio3 = 50;
+//	private int ratio4 = 37;
+//	private int ratio5 = 30;
+//	private int ratio6 = 1; // does not exist in Figo
+//	private double base_pedal_position = 15.0;
+//	private int min_rpm = 1300;
+	
+//	Mustang GT RATIOS rpm/speed
+	private int ratio1 = 100;
+	private int ratio2 = 66;
+	private int ratio3 = 46;
+	private int ratio4 = 35;
+	private int ratio5 = 27;
+	private int ratio6 = 18;
+	private double base_pedal_position = 10.0;
+	private int min_rpm = 1600;
 	
 //	Focus ST RATIOS rpm/speed:
 //	private int ratio1 = 114;
@@ -100,6 +110,8 @@ public class MainActivity extends Activity {
 //	private int ratio4 = 36;
 //	private int ratio5 = 28;
 //	private int ratio6 = 23;
+//	private double base_pedal_position = 15.0;
+//	private int min_rpm = 1300;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -271,23 +283,28 @@ public class MainActivity extends Activity {
 		    double ratio = engine_speed/vehicle_speed;
 		    long currentTime = new Date().getTime();
 		    
-		    if((ratio1*1.04) > ratio && (ratio1*.96) < ratio){
+		    if((ratio1*1.2) > ratio && (ratio1*.8) < ratio){
+		    	if (next_ratio != ratio2) justShifted = false;
 		    	next_ratio=ratio2;
 		    	updateGear(1);
 		    }
 		    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
+		    	if (next_ratio != ratio3) justShifted = false;
 		    	next_ratio=ratio3;
 		    	updateGear(2);
 		    }
 		    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
+		    	if (next_ratio != ratio4) justShifted = false;
 		    	next_ratio=ratio4;
 		    	updateGear(3);
 		    }
 		    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
+		    	if (next_ratio != ratio5) justShifted = false;
 		    	next_ratio=ratio5;
 		    	updateGear(4);
 		    }
 		    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
+		    	if (next_ratio != ratio6) justShifted = false;
 		    	next_ratio=ratio6;
 		    	updateGear(5);
 		    }
@@ -296,6 +313,7 @@ public class MainActivity extends Activity {
 		    	cancelShift(currentTime);
 		    }
 		    else {
+		    	justShifted = false;
 		    	updateGear(0);
 		    	cancelShift(currentTime); 
 		    	return;
@@ -314,7 +332,8 @@ public class MainActivity extends Activity {
 		    double next_rpm;
 		    if (pedal_pos >= base_pedal_position){
 		    	//algorithm based on particular vehicle. requires tweeking for best performance
-		    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1480;
+		    	next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
+		    	//next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
 		    }
 		    
 		    else next_rpm=min_rpm;
@@ -326,13 +345,13 @@ public class MainActivity extends Activity {
         			MainActivity.this.runOnUiThread(new Runnable() {
     			        public void run() {
     			            mShiftCalc.setText("Shift!!");
+    			            mLayout.setBackgroundColor(Color.WHITE);
     			        }
     			    });
+        			justShifted = true;
+        			shiftTime = new Date().getTime();
         		}
-		    	
-        		justShifted = true;
-		    	 
-		    	shiftTime = new Date().getTime();
+        		cancelShift(currentTime);
 		    }
 		    
 		    else cancelShift(currentTime);
@@ -354,11 +373,12 @@ public class MainActivity extends Activity {
 		}
 		private void cancelShift(long t) {
 			// only cancel the shift indication after it's been on the screen for 1000ms
-			if (t-shiftTime>1000){
-				justShifted = false;
+			if (t-shiftTime>500){
+				//justShifted = false;
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
-						mShiftCalc.setText("");		
+						mShiftCalc.setText("");
+						mLayout.setBackgroundColor(Color.BLACK);
 					}
 				});
 			}
@@ -385,6 +405,7 @@ public class MainActivity extends Activity {
 		        public void run() {
 		        	if (updated_value.getValue().booleanValue() == true) {
 		        		mShiftIndicator.setText("SHIFT!");
+		        		mLayout.setBackgroundColor(Color.WHITE);
 		        		if (!justShifted){
 		        			send2Arduino('['+"1"+']');
 		        		}
@@ -393,6 +414,7 @@ public class MainActivity extends Activity {
 		        	
 		        	else {
 		        		mShiftIndicator.setText("");
+		        		mLayout.setBackgroundColor(Color.WHITE);
 		        		justShifted = false;
 		        	}
 		        }
