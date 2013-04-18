@@ -74,7 +74,6 @@ public class MainActivity extends Activity {
 	private TextView mGearPosition;
 	private SeekBar mLEDbar;
 	private View mLayout;
-	private TraceVehicleDataSource mTraceSource;
 	private int engine_speed;
 	private double vehicle_speed;
 	private double pedal_pos;
@@ -230,18 +229,6 @@ public class MainActivity extends Activity {
 			} catch(UnrecognizedMeasurementTypeException e) {
            	 	Log.w(TAG, "Couldn't add listeners for measurements", e);
 			}
-	        
-	        URI mTraceFile;
-			try {
-				mTraceFile = new URI("file:///sdcard/com.openxc/shiftIndicateTraceboolean.json");
-				mTraceSource = new TraceVehicleDataSource(MainActivity.this, mTraceFile);
-			} catch (URISyntaxException e1) {
-				Log.w(TAG, "URI syntax error on tracefile", e1);
-			} catch (DataSourceException e) {
-				Log.w(TAG, "Data source error while trying to add trace file", e);
-			}
-	        //mVehicleManager.addSource(mTraceSource);
-			//mIsBound = true;
 	    }
 
 	    // Called when the connection with the service disconnects unexpectedly
