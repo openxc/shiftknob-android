@@ -94,6 +94,7 @@ public class MainActivity extends Activity {
 //	private int min_rpm = 1300;
 	
 //	Mustang GT RATIOS rpm/speed
+	private int[] gearRatios = new int[7];
 	private int ratio1 = 100;
 	private int ratio2 = 66;
 	private int ratio3 = 46;
@@ -238,7 +239,6 @@ public class MainActivity extends Activity {
 	    }
 	};
 	
-	
 	VehicleSpeed.Listener mSpeedListener = new VehicleSpeed.Listener() {
 		public void receive(Measurement measurement) {
 		    final VehicleSpeed updated_value = (VehicleSpeed) measurement;
@@ -307,6 +307,17 @@ public class MainActivity extends Activity {
 	    if(vehicle_speed==0) vehicle_speed = 1;
 	    double ratio = engine_speed/vehicle_speed;
 	    long currentTime = new Date().getTime();
+	    
+	    /*
+	    
+	    for (int i = 0; i < length(gearRatios()); i++) {
+	    
+	    
+	    }
+	    
+	    
+	    */
+	    
 	    
 	    if((ratio1*1.2) > ratio && (ratio1*.8) < ratio){
 	    	if (next_ratio != ratio2) justShifted = false;
@@ -382,7 +393,6 @@ public class MainActivity extends Activity {
 	    else cancelShift(currentTime);
 	}
 
-
 	private void updateGear(final int g) {
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -396,6 +406,7 @@ public class MainActivity extends Activity {
 		}
 		currentGear = g;
 	}
+	
 	private void cancelShift(long t) {
 		// only cancel the shift indication after it's been on the screen for 1000ms
 		if (t-shiftTime>500){
