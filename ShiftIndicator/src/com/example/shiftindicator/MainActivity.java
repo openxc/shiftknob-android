@@ -82,6 +82,7 @@ public class MainActivity extends Activity {
 	
 	private int currentGear;
 	boolean justShifted;
+	int next_ratio=1;
 	
 //	FIGO RATIOS rpm/speed
 //	private int ratio1 = 140;
@@ -264,8 +265,6 @@ public class MainActivity extends Activity {
 		    });
 		}
 	};
-
-	int next_ratio=1;
 	
 	EngineSpeed.Listener mEngineListener = new EngineSpeed.Listener() {
 		public void receive(Measurement measurement) {
@@ -276,113 +275,7 @@ public class MainActivity extends Activity {
 		            mEngineSpeedView.setText(""+engine_speed);
 		        }
 		    });
-		    
-		    // Gear position calculation
-		    // First calculate gear based on ratio of rpm to speed
-		    if(vehicle_speed==0) vehicle_speed = 1;
-		    double ratio = engine_speed/vehicle_speed;
-		    long currentTime = new Date().getTime();
-		    
-		    if((ratio1*1.2) > ratio && (ratio1*.8) < ratio){
-		    	if (next_ratio != ratio2) justShifted = false;
-		    	next_ratio=ratio2;
-		    	updateGear(1);
-		    }
-		    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
-		    	if (next_ratio != ratio3) justShifted = false;
-		    	next_ratio=ratio3;
-		    	updateGear(2);
-		    }
-		    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
-		    	if (next_ratio != ratio4) justShifted = false;
-		    	next_ratio=ratio4;
-		    	updateGear(3);
-		    }
-		    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
-		    	if (next_ratio != ratio5) justShifted = false;
-		    	next_ratio=ratio5;
-		    	updateGear(4);
-		    }
-		    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
-		    	if (next_ratio != ratio6) justShifted = false;
-		    	next_ratio=ratio6;
-		    	updateGear(5);
-		    }
-		    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
-		    	updateGear(6);
-		    	cancelShift(currentTime);
-		    }
-		    else {
-		    	justShifted = false;
-		    	updateGear(0);
-		    	cancelShift(currentTime); 
-		    	return;
-		    }
-		    
-		    //if the pedal_pos is less than 10 then the driver is probably
-		    //shifting or slowing down so no shift indication is needed
-		    if (pedal_pos < 10) {
-		    	cancelShift(currentTime);
-		    	return;
-		    }
-		    
-		    //if the pedal position is above the minimum threshold, then the 
-		    //driver is thought to be accelerating heavily and thus the shift indication
-		    //should be sent at a higher RPM:
-		    double next_rpm;
-		    if (pedal_pos >= base_pedal_position){
-		    	//algorithm based on particular vehicle. requires tweeking for best performance
-		    	next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
-		    	//next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
-		    }
-		    
-		    else next_rpm=min_rpm;
-		    
-		    if (next_rpm < vehicle_speed*next_ratio){
-		    	
-		    	if (!justShifted){
-        			send2Arduino('['+"1"+']');
-        			MainActivity.this.runOnUiThread(new Runnable() {
-    			        public void run() {
-    			            mShiftCalc.setText("Shift!!");
-    			            mLayout.setBackgroundColor(Color.WHITE);
-    			        }
-    			    });
-        			justShifted = true;
-        			shiftTime = new Date().getTime();
-        		}
-        		cancelShift(currentTime);
-		    }
-		    
-		    else cancelShift(currentTime);
-		}
-
-
-		private void updateGear(final int g) {
-			MainActivity.this.runOnUiThread(new Runnable() {
-				public void run() {
-					mGearPosition.setText(Integer.toString(g));
-				}
-			});
-			
-			if (g != currentGear){
-				String s = '<'+Integer.toString(g)+'>';
-				send2Arduino(s);
-			}
-			currentGear = g;
-		}
-		private void cancelShift(long t) {
-			// only cancel the shift indication after it's been on the screen for 1000ms
-			if (t-shiftTime>500){
-				//justShifted = false;
-				MainActivity.this.runOnUiThread(new Runnable() {
-					public void run() {
-						mShiftCalc.setText("");
-						mLayout.setBackgroundColor(Color.BLACK);
-					}
-				});
-			}
-			return;
+		    shiftCalculation();
 		}
 	};		
 	
@@ -421,6 +314,115 @@ public class MainActivity extends Activity {
 		    });
 		}
 	};
+	
+	public void shiftCalculation() {
+		// Gear position calculation
+	    // First calculate gear based on ratio of rpm to speed
+	    if(vehicle_speed==0) vehicle_speed = 1;
+	    double ratio = engine_speed/vehicle_speed;
+	    long currentTime = new Date().getTime();
+	    
+	    if((ratio1*1.2) > ratio && (ratio1*.8) < ratio){
+	    	if (next_ratio != ratio2) justShifted = false;
+	    	next_ratio=ratio2;
+	    	updateGear(1);
+	    }
+	    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
+	    	if (next_ratio != ratio3) justShifted = false;
+	    	next_ratio=ratio3;
+	    	updateGear(2);
+	    }
+	    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
+	    	if (next_ratio != ratio4) justShifted = false;
+	    	next_ratio=ratio4;
+	    	updateGear(3);
+	    }
+	    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
+	    	if (next_ratio != ratio5) justShifted = false;
+	    	next_ratio=ratio5;
+	    	updateGear(4);
+	    }
+	    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
+	    	if (next_ratio != ratio6) justShifted = false;
+	    	next_ratio=ratio6;
+	    	updateGear(5);
+	    }
+	    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
+	    	updateGear(6);
+	    	cancelShift(currentTime);
+	    }
+	    else {
+	    	justShifted = false;
+	    	updateGear(0);
+	    	cancelShift(currentTime); 
+	    	return;
+	    }
+	    
+	    //if the pedal_pos is less than 10 then the driver is probably
+	    //shifting or slowing down so no shift indication is needed
+	    if (pedal_pos < 10) {
+	    	cancelShift(currentTime);
+	    	return;
+	    }
+	    
+	    //if the pedal position is above the minimum threshold, then the 
+	    //driver is thought to be accelerating heavily and thus the shift indication
+	    //should be sent at a higher RPM:
+	    double next_rpm;
+	    if (pedal_pos >= base_pedal_position){
+	    	//algorithm based on particular vehicle. requires tweeking for best performance
+	    	next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
+	    	//next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
+	    }
+	    
+	    else next_rpm=min_rpm;
+	    
+	    if (next_rpm < vehicle_speed*next_ratio){
+	    	
+	    	if (!justShifted){
+    			send2Arduino('['+"1"+']');
+    			MainActivity.this.runOnUiThread(new Runnable() {
+			        public void run() {
+			            mShiftCalc.setText("Shift!!");
+			            mLayout.setBackgroundColor(Color.WHITE);
+			        }
+			    });
+    			justShifted = true;
+    			shiftTime = new Date().getTime();
+    		}
+    		cancelShift(currentTime);
+	    }
+	    
+	    else cancelShift(currentTime);
+	}
+
+
+	private void updateGear(final int g) {
+		MainActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+				mGearPosition.setText(Integer.toString(g));
+			}
+		});
+		
+		if (g != currentGear){
+			String s = '<'+Integer.toString(g)+'>';
+			send2Arduino(s);
+		}
+		currentGear = g;
+	}
+	private void cancelShift(long t) {
+		// only cancel the shift indication after it's been on the screen for 1000ms
+		if (t-shiftTime>500){
+			//justShifted = false;
+			MainActivity.this.runOnUiThread(new Runnable() {
+				public void run() {
+					mShiftCalc.setText("");
+					mLayout.setBackgroundColor(Color.BLACK);
+				}
+			});
+		}
+		return;
+	}
 	
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
