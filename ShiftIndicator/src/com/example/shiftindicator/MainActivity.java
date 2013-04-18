@@ -210,7 +210,6 @@ public class MainActivity extends Activity {
 	    super.onPause();
 	    Log.i("openxc", "Unbinding from vehicle service");
 	    unbindService(mConnection);
-	    mVehicleManager.removeSource(mTraceSource);
 	}
 
 	private ServiceConnection mConnection = new ServiceConnection() {
