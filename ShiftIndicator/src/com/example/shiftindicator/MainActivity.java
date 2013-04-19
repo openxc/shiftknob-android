@@ -94,7 +94,16 @@ public class MainActivity extends Activity {
 //	private int min_rpm = 1300;
 	
 //	Mustang GT RATIOS rpm/speed
-	private int[] gearRatios = new int[7];
+	private int[] gearRatios = {
+			0,		// Neutral
+			100,	// 1st
+			66,		// 2nd
+			46,		// 3rd
+			35,		// 4th
+			27,		// 5th
+			18 		// 6th
+		};
+	
 	private int ratio1 = 100;
 	private int ratio2 = 66;
 	private int ratio3 = 46;
@@ -308,51 +317,21 @@ public class MainActivity extends Activity {
 	    double ratio = engine_speed/vehicle_speed;
 	    long currentTime = new Date().getTime();
 	    
-	    /*
-	    
-	    for (int i = 0; i < length(gearRatios()); i++) {
-	    
-	    
-	    }
-	    
-	    
-	    */
-	    
-	    
-	    if((ratio1*1.2) > ratio && (ratio1*.8) < ratio){
-	    	if (next_ratio != ratio2) justShifted = false;
-	    	next_ratio=ratio2;
-	    	updateGear(1);
-	    }
-	    else if((ratio2*1.1) > ratio && (ratio2*.9) < ratio){
-	    	if (next_ratio != ratio3) justShifted = false;
-	    	next_ratio=ratio3;
-	    	updateGear(2);
-	    }
-	    else if((ratio3*1.1) > ratio && (ratio3*.9) < ratio){
-	    	if (next_ratio != ratio4) justShifted = false;
-	    	next_ratio=ratio4;
-	    	updateGear(3);
-	    }
-	    else if((ratio4*1.1) > ratio && (ratio4*.9) < ratio){
-	    	if (next_ratio != ratio5) justShifted = false;
-	    	next_ratio=ratio5;
-	    	updateGear(4);
-	    }
-	    else if((ratio5*1.1) > ratio && (ratio5*.9) < ratio){
-	    	if (next_ratio != ratio6) justShifted = false;
-	    	next_ratio=ratio6;
-	    	updateGear(5);
-	    }
-	    else if((ratio6*1.1) > ratio && (ratio6*.9) < ratio){
-	    	updateGear(6);
-	    	cancelShift(currentTime);
-	    }
-	    else {
-	    	justShifted = false;
-	    	updateGear(0);
-	    	cancelShift(currentTime); 
-	    	return;
+	    for (int i = 1; i < gearRatios.length; i++) {
+	    	if (gearRatios[i]*.9 < ratio && gearRatios[i]*1.1 > ratio) {
+	    		if (next_ratio != gearRatios[i]) justShifted = false;
+	    		next_ratio=gearRatios[i];
+	    		updateGear(i);
+	    		break;
+	    	}
+	    	
+	    	if (i == gearRatios.length-1) {
+	    		// if the loop gets to here, then the vehicle is thought to be in Neutral
+	    		justShifted = false;
+	    		updateGear(0);
+	    		cancelShift(currentTime);
+	    		return;
+	    	}
 	    }
 	    
 	    //if the pedal_pos is less than 10 then the driver is probably
