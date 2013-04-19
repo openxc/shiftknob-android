@@ -6,17 +6,17 @@
 	    android:summary="@string/pref_operation_summary">
 	    
 	    <SwitchPreference
-	        android:key="pref_operation_mode_key"
+	        android:id="@+id/pref_operation_mode_key"
 	        android:title="@string/pref_mode_title" 
 	        android:summary="@string/pref_mode_summary"
 	        android:switchTextOn="@string/pref_mode_off"
 	        android:switchTextOff="@string/pref_mode_on"
 	        android:defaultValue="true"/>
 	    <CheckBoxPreference 
-	        android:key="pref_haptic_feedback_key"
+	        android:id="@+id/pref_haptic_feedback_key"
 	        android:title="@string/pref_haptic_title"/>
 	    <CheckBoxPreference 
-	        android:key="pref_audio_feedback_key"
+	        android:id="@+id/pref_audio_feedback_key"
 	        android:title="@string/pref_audio_title"/>
 	</PreferenceCategory>
 	
