@@ -78,6 +78,8 @@ public class MainActivity extends Activity {
 	boolean justShifted;
 	int next_ratio=1;
 	
+////* VEHICLE SPECIFIC DATA *////
+	
 //	FIGO RATIOS rpm/speed
 //	private int[] gearRatios = {
 //		0,		// Neutral
@@ -135,7 +137,7 @@ public class MainActivity extends Activity {
 	    mLayout = findViewById(R.id.layout);
 	    mLayout.setBackgroundColor(Color.BLACK);
 	    
-	    mLEDbar = (SeekBar) findViewById(R.id.led_bar);
+        mLEDbar = (SeekBar) findViewById(R.id.led_bar);
 	    mLEDbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -152,7 +154,6 @@ public class MainActivity extends Activity {
 	    });
 	    
 	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-	    
 	    mPermissionIntent = PendingIntent.getBroadcast(this, 0,
                 new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
