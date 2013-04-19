@@ -23,12 +23,4 @@
 	        android:title="@string/pref_audio_title"/>
 	</PreferenceCategory>
 	
-	<PreferenceCategory
-	    android:title="@string/pref_datasource_title">
-	    <CheckBoxPreference
-	        android:key="pref_data_source"
-	        android:title="@string/pref_data_title"
-	        android:summary="@string/pref_data_summary"/>
-	</PreferenceCategory>
-
 </PreferenceScreen>
