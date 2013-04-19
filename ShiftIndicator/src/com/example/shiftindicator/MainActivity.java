@@ -1,8 +1,5 @@
 package com.example.shiftindicator;
 
-
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 import jp.ksksue.driver.serial.FTDriver;
@@ -14,8 +11,6 @@ import com.openxc.measurements.Measurement;
 import com.openxc.measurements.UnrecognizedMeasurementTypeException;
 import com.openxc.measurements.VehicleSpeed;
 import com.openxc.remote.VehicleServiceException;
-import com.openxc.sources.DataSourceException;
-import com.openxc.sources.trace.TraceVehicleDataSource;
 
 import android.os.Bundle;
 import android.os.IBinder;
