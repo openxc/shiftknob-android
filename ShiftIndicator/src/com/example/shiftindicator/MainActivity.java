@@ -84,42 +84,40 @@ public class MainActivity extends Activity {
 	int next_ratio=1;
 	
 //	FIGO RATIOS rpm/speed
-//	private int ratio1 = 140;
-//	private int ratio2 = 75;
-//	private int ratio3 = 50;
-//	private int ratio4 = 37;
-//	private int ratio5 = 30;
-//	private int ratio6 = 1; // does not exist in Figo
+//	private int[] gearRatios = {
+//		0,		// Neutral
+//		140,	// 1st
+//		75,		// 2nd
+//		50,		// 3rd
+//		37,		// 4th
+//		30,		// 5th
+//	};
 //	private double base_pedal_position = 15.0;
 //	private int min_rpm = 1300;
 	
 //	Mustang GT RATIOS rpm/speed
 	private int[] gearRatios = {
-			0,		// Neutral
-			100,	// 1st
-			66,		// 2nd
-			46,		// 3rd
-			35,		// 4th
-			27,		// 5th
-			18 		// 6th
-		};
-	
-	private int ratio1 = 100;
-	private int ratio2 = 66;
-	private int ratio3 = 46;
-	private int ratio4 = 35;
-	private int ratio5 = 27;
-	private int ratio6 = 18;
+		0,		// Neutral
+		100,	// 1st
+		66,		// 2nd
+		46,		// 3rd
+		35,		// 4th
+		27,		// 5th
+		18 		// 6th
+	};
 	private double base_pedal_position = 10.0;
 	private int min_rpm = 1600;
 	
 //	Focus ST RATIOS rpm/speed:
-//	private int ratio1 = 114;
-//	private int ratio2 = 69;
-//	private int ratio3 = 46;
-//	private int ratio4 = 36;
-//	private int ratio5 = 28;
-//	private int ratio6 = 23;
+//	private int[] gearRatios = {
+//		0,		// Neutral
+//		114,	// 1st
+//		69,		// 2nd
+//		46,		// 3rd
+//		36,		// 4th
+//		28,		// 5th
+//		23 		// 6th
+//	};
 //	private double base_pedal_position = 15.0;
 //	private int min_rpm = 1300;
 	
@@ -196,7 +194,6 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		MenuInflater inflater = getMenuInflater();
 		getMenuInflater().inflate(R.menu.settings, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -310,9 +307,18 @@ public class MainActivity extends Activity {
 		}
 	};
 	
+	/* shiftCalculation is the main function of this class. In the event 
+	 * that a vehicle is not equipped with a built-in "ShiftRecommendation" 
+	 * signal on CAN, this function will calculate the upshift point locally. 
+	 * The gear position and shift point are then sent to the shift knob. 
+	 */
 	public void shiftCalculation() {
-		// Gear position calculation
-	    // First calculate gear based on ratio of rpm to speed
+		
+		/* GEAR POSITION CALCULATION:
+		 * First calculate gear based on ratio of rpm to speed.
+		 * The for loop compares known gear ratios with the 
+		 * calculated ratio. 
+		 */
 	    if(vehicle_speed==0) vehicle_speed = 1;
 	    double ratio = engine_speed/vehicle_speed;
 	    long currentTime = new Date().getTime();
@@ -326,7 +332,7 @@ public class MainActivity extends Activity {
 	    	}
 	    	
 	    	if (i == gearRatios.length-1) {
-	    		// if the loop gets to here, then the vehicle is thought to be in Neutral
+	    		//if the loop gets to here, then the vehicle is thought to be in Neutral
 	    		justShifted = false;
 	    		updateGear(0);
 	    		cancelShift(currentTime);
@@ -334,21 +340,37 @@ public class MainActivity extends Activity {
 	    	}
 	    }
 	    
-	    //if the pedal_pos is less than 10 then the driver is probably
-	    //shifting or slowing down so no shift indication is needed
+	    /* SHIFT CALCULATION:
+	     * The upshift signal is based on throttle position and the rpm
+	     * of the engine in the NEXT gear. The higher the throttle position,
+	     * the higher the rpm in the next gear (quick acceleration). 
+	     * 
+	     * First, if the pedal position is less than 10, then the driver is 
+	     * probably shifting or slowing down, so no shift signal is needed.
+	     */
+	    
 	    if (pedal_pos < 10) {
 	    	cancelShift(currentTime);
 	    	return;
 	    }
 	    
-	    //if the pedal position is above the minimum threshold, then the 
-	    //driver is thought to be accelerating heavily and thus the shift indication
-	    //should be sent at a higher RPM:
+	    /* If the pedal position is above the minimum threshold, then the driver
+	     * is thought to be holding a constant speed or accelerating and thus 
+	     * the shift signal point should be calculated.
+	     * 
+	     * Values A, B, and C of the algorithm below must be optimized for each
+	     * specific vehicle.
+	     * 
+	     * next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C   TEMPLATE
+	     * 
+	     * If the calculated next_rpm is less than rpm the vehicle would be if shifted
+	     * to the next gear, the shift signal is sent to the shift knob.
+	     */
+
 	    double next_rpm;
 	    if (pedal_pos >= base_pedal_position){
-	    	//algorithm based on particular vehicle. requires tweeking for best performance
 	    	next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
-	    	//next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
+	    	// next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
 	    }
 	    
 	    else next_rpm=min_rpm;
@@ -372,6 +394,9 @@ public class MainActivity extends Activity {
 	    else cancelShift(currentTime);
 	}
 
+	/* updateGear takes the calculated gear position and sends that value
+	 * to the shift knob. The gear position is enclosed in '<' ___ '>'
+	 */
 	private void updateGear(final int g) {
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -386,10 +411,11 @@ public class MainActivity extends Activity {
 		currentGear = g;
 	}
 	
+	/* cancelShift removes the "upshift message" from the UI screen after a given
+	 * amount of time.
+	 */
 	private void cancelShift(long t) {
-		// only cancel the shift indication after it's been on the screen for 1000ms
 		if (t-shiftTime>500){
-			//justShifted = false;
 			MainActivity.this.runOnUiThread(new Runnable() {
 				public void run() {
 					mShiftCalc.setText("");
