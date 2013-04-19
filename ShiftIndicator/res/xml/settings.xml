@@ -5,9 +5,6 @@
 	    android:title="@string/pref_operation_title"
 	    android:summary="@string/pref_operation_summary">
 	    
-	    <SwitchPreference 
-	        android:key="pref_power_key"
-	        android:title="@string/pref_power_title"/>
 	    <SwitchPreference
 	        android:key="pref_operation_mode_key"
 	        android:title="@string/pref_mode_title" 

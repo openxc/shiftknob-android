@@ -106,4 +106,14 @@
         android:layout_below="@+id/shift_calculated"
         android:layout_centerInParent="true" />
 
+    <Switch
+        android:id="@+id/power_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:text="@string/power_title"
+        android:textSize="25dp" />
+
 </RelativeLayout>

@@ -14,12 +14,12 @@
 	<string name="pref_audio_title">Audible Tone</string>
 	<string name="pref_operation_summary">Select the desired functionality</string>
 	<string name="pref_mode_title">Select Performance Mode</string>
-	<string name="pref_power_title">Driving Coach</string>
+	<string name="power_title">Driving Coach</string>
 	<string name="settingsTitle">Settings</string>
 	<string name="exitTitle">Close</string>
 	
 	<string name="pref_mode_off">Performance</string>
 	<string name="pref_mode_on">Fuel Economy</string>
 	<string name="pref_mode_summary">Fuel Economy/Performance Mode</string>
-	
+
 </resources>
