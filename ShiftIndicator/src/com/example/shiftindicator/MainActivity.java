@@ -12,6 +12,7 @@ import com.openxc.measurements.UnrecognizedMeasurementTypeException;
 import com.openxc.measurements.VehicleSpeed;
 import com.openxc.remote.VehicleServiceException;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -46,6 +47,7 @@ public class MainActivity extends Activity {
 	private boolean mIsBound;
 	
 	private SharedPreferences sharedPrefs;
+	private MediaPlayer mediaPlayer;
 	
 	//USB setup:
     public static final String ACTION_USB_PERMISSION =
@@ -125,6 +127,7 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Shift Indicator created");
 		
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		mediaPlayer = MediaPlayer.create(this, R.raw.chime);
 		
 		Intent intent = new Intent(this, VehicleManager.class);
 	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -381,6 +384,7 @@ public class MainActivity extends Activity {
 			            mLayout.setBackgroundColor(Color.WHITE);
 			        }
 			    });
+    			mediaPlayer.start();
     			justShifted = true;
     			shiftTime = new Date().getTime();
     		}
