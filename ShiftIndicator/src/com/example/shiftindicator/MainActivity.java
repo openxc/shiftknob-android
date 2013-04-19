@@ -36,8 +36,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -69,6 +72,8 @@ public class MainActivity extends Activity {
 	private TextView mShiftCalc;
 	private TextView mPedalView;
 	private TextView mGearPosition;
+	private Switch mPowerSwitch;
+	private boolean power_status = false;
 	private SeekBar mLEDbar;
 	private View mLayout;
 	private int engine_speed;
@@ -154,6 +159,14 @@ public class MainActivity extends Activity {
 			public void onStopTrackingTouch(SeekBar seekBar) {			
 			}
 
+	    });
+	    
+	    mPowerSwitch = (Switch) findViewById(R.id.power_switch);
+	    mPowerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				power_status = isChecked;
+			}
 	    });
 	    
 	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -287,7 +300,7 @@ public class MainActivity extends Activity {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
 		    MainActivity.this.runOnUiThread(new Runnable() {
 		        public void run() {
-		        	if (updated_value.getValue().booleanValue() == true) {
+		        	if (updated_value.getValue().booleanValue() == true && power_status) {
 		        		mShiftIndicator.setText("SHIFT!");
 		        		mLayout.setBackgroundColor(Color.WHITE);
 		        		if (!justShifted){
@@ -298,7 +311,7 @@ public class MainActivity extends Activity {
 		        	
 		        	else {
 		        		mShiftIndicator.setText("");
-		        		mLayout.setBackgroundColor(Color.WHITE);
+		        		mLayout.setBackgroundColor(Color.BLACK);
 		        		justShifted = false;
 		        	}
 		        }
@@ -338,6 +351,8 @@ public class MainActivity extends Activity {
 	    		return;
 	    	}
 	    }
+	    
+	    if (!power_status) return;
 	    
 	    /* SHIFT CALCULATION:
 	     * The upshift signal is based on throttle position and the rpm
