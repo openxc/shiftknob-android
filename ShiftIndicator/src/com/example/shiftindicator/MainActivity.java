@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -132,6 +133,10 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Shift Indicator created");
 		
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		Editor editor = sharedPrefs.edit();
+		editor.putBoolean("pref_haptic_feedback", true);
+		editor.putBoolean("pref_audio_feedback", true);
+		
 		mediaPlayer = MediaPlayer.create(this, R.raw.chime);
 		
 		Intent intent = new Intent(this, VehicleManager.class);
@@ -377,14 +382,21 @@ public class MainActivity extends Activity {
 	    if (next_rpm < vehicle_speed*next_ratio){
 	    	
 	    	if (!justShifted){
-    			send2Arduino("shift", 1);
+	    		if (sharedPrefs.getBoolean("pref_haptic_feedback", false)) {
+	    			send2Arduino("shift", 1);
+	    		}
+	    		
+    			if (sharedPrefs.getBoolean("pref_audio_feedback", false)) {
+    				mediaPlayer.start();
+    			}
+    			
     			MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
 			            mShiftCalc.setText("Shift!!");
 			            mLayout.setBackgroundColor(Color.WHITE);
 			        }
 			    });
-    			mediaPlayer.start();
+    			
     			justShifted = true;
     			shiftTime = new Date().getTime();
     		}
