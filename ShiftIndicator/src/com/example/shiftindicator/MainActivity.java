@@ -88,29 +88,29 @@ public class MainActivity extends Activity {
 ////* VEHICLE SPECIFIC DATA *////
 	
 //	FIGO RATIOS rpm/speed
-//	private int[] gearRatios = {
-//		0,		// Neutral
-//		140,	// 1st
-//		75,		// 2nd
-//		50,		// 3rd
-//		37,		// 4th
-//		30,		// 5th
-//	};
-//	private double base_pedal_position = 15.0;
-//	private int min_rpm = 1300;
-	
-//	Mustang GT RATIOS rpm/speed
 	private int[] gearRatios = {
 		0,		// Neutral
-		100,	// 1st
-		66,		// 2nd
-		46,		// 3rd
-		35,		// 4th
-		27,		// 5th
-		18 		// 6th
+		140,	// 1st
+		75,		// 2nd
+		50,		// 3rd
+		37,		// 4th
+		30,		// 5th
 	};
-	private double base_pedal_position = 10.0;
-	private int min_rpm = 1600;
+	private double base_pedal_position = 15.0;
+	private int min_rpm = 1300;
+	
+//	Mustang GT RATIOS rpm/speed
+//	private int[] gearRatios = {
+//		0,		// Neutral
+//		100,	// 1st
+//		66,		// 2nd
+//		46,		// 3rd
+//		35,		// 4th
+//		27,		// 5th
+//		18 		// 6th
+//	};
+//	private double base_pedal_position = 10.0;
+//	private int min_rpm = 1600;
 	
 //	Focus ST RATIOS rpm/speed:
 //	private int[] gearRatios = {
@@ -149,8 +149,7 @@ public class MainActivity extends Activity {
 	    mLEDbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				String s = Integer.toString(progress*255/100);
-				send2Arduino('('+s+')');
+				send2Arduino("color", progress*255/100);
 			}
 
 			public void onStartTrackingTouch(SeekBar seekBar) {
@@ -184,23 +183,8 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "mSerialPort.begin() failed.");
             } else{
                 Log.d(TAG, "mSerialPort.begin() success!.");
-                String s = '<'+"0"+'>';
-				send2Arduino(s);
+				send2Arduino("gear", 0);
             }
-        }
-	}
-
-	public void send2Arduino(String outString){
-		char[] outMessage = outString.toCharArray();
-        byte outBuffer[] = new byte[128];
-        for(int i=0; i<outString.length(); i++)
-        {
-            outBuffer[i] = (byte)outMessage[i];
-        }
-        try {
-        	mSerialPort.write(outBuffer, outString.length());
-        } catch (Exception e) {
-            Log.d(TAG, "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
         }
 	}
 	
@@ -304,7 +288,8 @@ public class MainActivity extends Activity {
 		        		mShiftIndicator.setText("SHIFT!");
 		        		mLayout.setBackgroundColor(Color.WHITE);
 		        		if (!justShifted){
-		        			send2Arduino('['+"1"+']');
+		        			send2Arduino("shift", 1);
+		        			mediaPlayer.start();
 		        		}
 		        		justShifted = true;
 		        	}
@@ -383,8 +368,8 @@ public class MainActivity extends Activity {
 
 	    double next_rpm;
 	    if (pedal_pos >= base_pedal_position){
-	    	next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
-	    	// next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
+	    	// next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
+	    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
 	    }
 	    
 	    else next_rpm=min_rpm;
@@ -392,7 +377,7 @@ public class MainActivity extends Activity {
 	    if (next_rpm < vehicle_speed*next_ratio){
 	    	
 	    	if (!justShifted){
-    			send2Arduino('['+"1"+']');
+    			send2Arduino("shift", 1);
     			MainActivity.this.runOnUiThread(new Runnable() {
 			        public void run() {
 			            mShiftCalc.setText("Shift!!");
@@ -420,8 +405,7 @@ public class MainActivity extends Activity {
 		});
 		
 		if (g != currentGear){
-			String s = '<'+Integer.toString(g)+'>';
-			send2Arduino(s);
+			send2Arduino("gear", g);
 		}
 		currentGear = g;
 	}
@@ -439,6 +423,34 @@ public class MainActivity extends Activity {
 			});
 		}
 		return;
+	}
+	
+	public void send2Arduino(String signal, int value){
+		
+		String outString = null;
+		if (signal.equals("shift")) {
+			outString = '['+Integer.toString(value)+']';
+		}
+		
+		if (signal.equals("gear")) {
+			outString = '<'+Integer.toString(value)+'>';
+		}
+		
+		if (signal.equals("color")) {
+			outString = '('+Integer.toString(value)+')';
+		}
+		
+		char[] outMessage = outString.toCharArray();
+        byte outBuffer[] = new byte[20];
+        for(int i=0; i<outString.length(); i++)
+        {
+            outBuffer[i] = (byte)outMessage[i];
+        }
+        try {
+        	mSerialPort.write(outBuffer, outString.length());
+        } catch (Exception e) {
+            Log.d(TAG, "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
+        }
 	}
 	
 	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
