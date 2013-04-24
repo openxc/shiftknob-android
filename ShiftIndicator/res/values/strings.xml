@@ -12,6 +12,7 @@
 	<string name="pref_operation_title">Feedback Options</string>
 	<string name="pref_haptic_title">Vibration</string>
 	<string name="pref_audio_title">Audible Tone</string>
+	<string name="pref_visual_title">Visual Signal</string>
 	<string name="pref_operation_summary">Select the desired functionality</string>
 	<string name="pref_mode_title">Select Performance Mode</string>
 	<string name="power_title">Driving Coach</string>

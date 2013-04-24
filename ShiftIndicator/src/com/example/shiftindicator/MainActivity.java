@@ -133,9 +133,6 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "Shift Indicator created");
 		
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		Editor editor = sharedPrefs.edit();
-		editor.putBoolean("pref_haptic_feedback", true);
-		editor.putBoolean("pref_audio_feedback", true);
 		
 		mediaPlayer = MediaPlayer.create(this, R.raw.chime);
 		
@@ -166,6 +163,7 @@ public class MainActivity extends Activity {
 	    });
 	    
 	    mPowerSwitch = (Switch) findViewById(R.id.power_switch);
+	    mPowerSwitch.setChecked(true);
 	    mPowerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
@@ -287,25 +285,14 @@ public class MainActivity extends Activity {
 	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
 		public void receive(Measurement measurement) {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
-		    MainActivity.this.runOnUiThread(new Runnable() {
-		        public void run() {
-		        	if (updated_value.getValue().booleanValue() == true && power_status) {
-		        		mShiftIndicator.setText("SHIFT!");
-		        		mLayout.setBackgroundColor(Color.WHITE);
-		        		if (!justShifted){
-		        			send2Arduino("shift", 1);
-		        			mediaPlayer.start();
-		        		}
-		        		justShifted = true;
-		        	}
-		        	
-		        	else {
-		        		mShiftIndicator.setText("");
-		        		mLayout.setBackgroundColor(Color.BLACK);
-		        		justShifted = false;
-		        	}
-		        }
-		    });
+        	
+		    if (updated_value.getValue().booleanValue() == true && power_status) {
+        		shift();
+        	}
+        	
+        	else {
+        		cancelShift(shiftTime+600);
+        	}
 		}
 	};
 	
@@ -376,33 +363,15 @@ public class MainActivity extends Activity {
 	    	// next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT Mustang
 	    	next_rpm = 1.2*(pedal_pos)*(pedal_pos)-30*pedal_pos+1300; //Figo/Focus
 	    }
-	    
 	    else next_rpm=min_rpm;
 	    
 	    if (next_rpm < vehicle_speed*next_ratio){
 	    	
 	    	if (!justShifted){
-	    		if (sharedPrefs.getBoolean("pref_haptic_feedback", false)) {
-	    			send2Arduino("shift", 1);
-	    		}
-	    		
-    			if (sharedPrefs.getBoolean("pref_audio_feedback", false)) {
-    				mediaPlayer.start();
-    			}
-    			
-    			MainActivity.this.runOnUiThread(new Runnable() {
-			        public void run() {
-			            mShiftCalc.setText("Shift!!");
-			            mLayout.setBackgroundColor(Color.WHITE);
-			        }
-			    });
-    			
-    			justShifted = true;
-    			shiftTime = new Date().getTime();
+	    		shift();
     		}
     		cancelShift(currentTime);
 	    }
-	    
 	    else cancelShift(currentTime);
 	}
 
@@ -422,6 +391,31 @@ public class MainActivity extends Activity {
 		currentGear = g;
 	}
 	
+	/* shift() handles all UI and shift knob functions for sending
+	 * shift indication messages to the driver. It checks the settings 
+	 * to see which signals to send, and then send the corresponding
+	 * signals to the proper places. 
+	 */
+	private void shift() {
+		if (sharedPrefs.getBoolean("pref_haptic_feedback", false)) {
+			send2Arduino("shift", 1);
+		}
+		
+		if (sharedPrefs.getBoolean("pref_audio_feedback", false)) {
+			mediaPlayer.start();
+		}
+		
+		MainActivity.this.runOnUiThread(new Runnable() {
+	        public void run() {
+	            mShiftCalc.setText("Shift!!");
+	            mLayout.setBackgroundColor(Color.WHITE);
+	        }
+	    });
+		
+		justShifted = true;
+		shiftTime = new Date().getTime();
+	}
+	
 	/* cancelShift removes the "upshift message" from the UI screen after a given
 	 * amount of time.
 	 */
@@ -434,7 +428,6 @@ public class MainActivity extends Activity {
 				}
 			});
 		}
-		return;
 	}
 	
 	public void send2Arduino(String signal, int value){

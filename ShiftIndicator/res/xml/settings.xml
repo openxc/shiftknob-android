@@ -14,10 +14,16 @@
 	        android:defaultValue="true"/>
 	    <CheckBoxPreference 
 	        android:key="pref_haptic_feedback"
-	        android:title="@string/pref_haptic_title"/>
+	        android:title="@string/pref_haptic_title"
+	        android:defaultValue="TRUE"/>
 	    <CheckBoxPreference 
 	        android:key="pref_audio_feedback"
-	        android:title="@string/pref_audio_title"/>
+	        android:title="@string/pref_audio_title"
+	        android:defaultValue="TRUE"/>
+	    <CheckBoxPreference 
+	        android:key="pref_visual_feedback"
+	        android:title="@string/pref_visual_title"
+	        android:defaultValue="TRUE"/>
 	</PreferenceCategory>
 	
 </PreferenceScreen>
