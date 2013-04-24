@@ -3,7 +3,6 @@ package com.example.shiftindicator;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-
 public class SettingsActivity extends PreferenceActivity {
 	
 	@Override

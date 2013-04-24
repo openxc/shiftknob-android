@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
 	private TextView mPedalView;
 	private TextView mGearPosition;
 	private Switch mPowerSwitch;
-	private boolean power_status = false;
+	private boolean power_status = true;
 	private SeekBar mLEDbar;
 	private View mLayout;
 	private int engine_speed;
@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		getMenuInflater().inflate(R.menu.settings, menu);
+		inflater.inflate(R.menu.settings, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -212,12 +212,6 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
-	public void onPause() {
-	    super.onPause();
-	    Log.i("openxc", "Unbinding from vehicle service");
-	    unbindService(mConnection);
-	}
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 	    // Called when the connection with the service is established
 	    public void onServiceConnected(ComponentName className,
@@ -405,13 +399,15 @@ public class MainActivity extends Activity {
 			mediaPlayer.start();
 		}
 		
-		MainActivity.this.runOnUiThread(new Runnable() {
-	        public void run() {
-	            mShiftCalc.setText("Shift!!");
-	            mLayout.setBackgroundColor(Color.WHITE);
-	        }
-	    });
-		
+		if (sharedPrefs.getBoolean("pref_visual_feedback", false)) {
+			MainActivity.this.runOnUiThread(new Runnable() {
+		        public void run() {
+		            mShiftCalc.setText("Shift!!");
+		            mLayout.setBackgroundColor(Color.WHITE);
+		        }
+		    });
+		}
+					
 		justShifted = true;
 		shiftTime = new Date().getTime();
 	}
