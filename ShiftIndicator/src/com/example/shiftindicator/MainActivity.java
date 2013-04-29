@@ -89,16 +89,16 @@ public class MainActivity extends Activity {
 ////* VEHICLE SPECIFIC DATA *////
 	
 //	FIGO RATIOS rpm/speed
-	private int[] gearRatios = {
-		0,		// Neutral
-		140,	// 1st
-		75,		// 2nd
-		50,		// 3rd
-		37,		// 4th
-		30,		// 5th
-	};
-	private double base_pedal_position = 15.0;
-	private int min_rpm = 1300;
+//	private int[] gearRatios = {
+//		0,		// Neutral
+//		140,	// 1st
+//		75,		// 2nd
+//		50,		// 3rd
+//		37,		// 4th
+//		30,		// 5th
+//	};
+//	private double base_pedal_position = 15.0;
+//	private int min_rpm = 1300;
 	
 //	Mustang GT RATIOS rpm/speed
 //	private int[] gearRatios = {
@@ -114,17 +114,17 @@ public class MainActivity extends Activity {
 //	private int min_rpm = 1600;
 	
 //	Focus ST RATIOS rpm/speed:
-//	private int[] gearRatios = {
-//		0,		// Neutral
-//		114,	// 1st
-//		69,		// 2nd
-//		46,		// 3rd
-//		36,		// 4th
-//		28,		// 5th
-//		23 		// 6th
-//	};
-//	private double base_pedal_position = 15.0;
-//	private int min_rpm = 1300;
+	private int[] gearRatios = {
+		0,		// Neutral
+		114,	// 1st
+		69,		// 2nd
+		46,		// 3rd
+		36,		// 4th
+		28,		// 5th
+		23 		// 6th
+	};
+	private double base_pedal_position = 15.0;
+	private int min_rpm = 1300;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
