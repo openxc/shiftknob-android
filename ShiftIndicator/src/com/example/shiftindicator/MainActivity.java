@@ -4,10 +4,12 @@ import java.util.Date;
 
 import jp.ksksue.driver.serial.FTDriver;
 
+import com.example.shiftindicator.ShiftRecommendation.ShiftSignal;
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;
 import com.openxc.measurements.Measurement;
+import com.openxc.measurements.TransmissionGearPosition;
 import com.openxc.measurements.UnrecognizedMeasurementTypeException;
 import com.openxc.measurements.VehicleSpeed;
 import com.openxc.remote.VehicleServiceException;
@@ -275,12 +277,13 @@ public class MainActivity extends Activity {
 		    });
 		}
 	};
-	
+    
 	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
 		public void receive(Measurement measurement) {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
         	
-		    if (updated_value.getValue().booleanValue() == true && power_status) {
+			if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT 
+					&& power_status) {
         		shift();
         	}
         	
@@ -362,7 +365,7 @@ public class MainActivity extends Activity {
 	    if (next_rpm < vehicle_speed*next_ratio){
 	    	
 	    	if (!justShifted){
-	    		shift();
+	    		//shift();
     		}
     		cancelShift(currentTime);
 	    }
