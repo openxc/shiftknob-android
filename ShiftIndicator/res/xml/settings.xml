@@ -2,8 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 	
 	<PreferenceCategory
-	    android:title="@string/pref_operation_title"
-	    android:summary="@string/pref_operation_summary">
+	    android:title="@string/pref_operation_title">
 	    
 	    <SwitchPreference
 	        android:key="pref_operation_mode"
@@ -11,6 +10,13 @@
 	        android:summary="@string/pref_mode_summary"
 	        android:switchTextOn="@string/pref_mode_off"
 	        android:switchTextOff="@string/pref_mode_on"
+	        android:defaultValue="true"/>
+	    <SwitchPreference
+	        android:key="pref_calculation_mode"
+	        android:title="@string/pref_calculation_title" 
+	        android:summary="@string/pref_calculation_summary"
+	        android:switchTextOn="@string/pref_calculation_off"
+	        android:switchTextOff="@string/pref_calculation_on"
 	        android:defaultValue="true"/>
 	    <CheckBoxPreference 
 	        android:key="pref_haptic_feedback"
