@@ -7,85 +7,44 @@
     android:background="#000000"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/vehicle_speed"
-        android:textColor="#FFFFFF"
+    <SeekBar
+        android:id="@+id/led_bar"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_centerInParent="true"
+        android:padding="50dp" />
+
+    <Switch
+        android:id="@+id/power_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/shift_indicator"
-        android:layout_alignRight="@+id/shift_indicator"
-        android:textSize="30sp" />
-    
-    <TextView
-        android:id="@+id/engine_speed"
-        android:textColor="#FFFFFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/vehicle_speed"
-        android:layout_alignRight="@+id/shift_indicator"
-        android:textSize="30sp" />
-    
-    <TextView
-        android:id="@+id/pedal_position"
-        android:textColor="#FFFFFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/engine_speed"
-        android:layout_alignRight="@+id/shift_indicator"
-        android:textSize="30sp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:text="@string/power_title"
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/engine_speed_label"
-        android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/engine_speed"
-        android:layout_alignBottom="@+id/engine_speed"
-        android:layout_alignLeft="@+id/shift_indicator"
+        android:layout_above="@+id/vehicle_speed_label"
+        android:layout_alignLeft="@+id/vehicle_speed_label"
         android:text="@string/engine_speed"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-    
-    <TextView
-        android:id="@+id/vehicle_speed_label"
         android:textColor="#FFFFFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/vehicle_speed"
-        android:layout_alignLeft="@+id/shift_indicator"
-        android:text="@string/vehicle_speed"
         android:textSize="30sp"
-        android:textStyle="bold" />
-    
-    <TextView
-        android:id="@+id/pedal_position_label"
-        android:textColor="#FFFFFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/engine_speed"
-        android:layout_alignLeft="@+id/shift_indicator"
-        android:text="@string/pedal_position"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-        
-    <TextView
-        android:id="@+id/shift_indicator"
-        android:textColor="#FFFFFF"
-        android:layout_width="300sp"
-        android:layout_height="100sp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:textSize="90sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/shift_calculated"
+        android:id="@+id/pedal_position_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed_label"
+        android:layout_alignLeft="@+id/engine_speed_label"
+        android:text="@string/pedal_position"
         android:textColor="#FFFFFF"
-        android:layout_width="300sp"
-        android:layout_height="100sp"
-        android:layout_alignLeft="@+id/shift_indicator"
-        android:layout_below="@+id/shift_indicator"
-        android:textSize="90sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
@@ -96,24 +55,58 @@
         android:layout_alignLeft="@+id/pedal_position_label"
         android:textColor="#FFFFFF"
         android:textSize="90sp"
+        android:text="-"
         android:textStyle="bold" />
 
-    <SeekBar
-        android:id="@+id/led_bar"
-        android:layout_width="500dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_below="@+id/shift_calculated"
-        android:layout_centerInParent="true" />
-
-    <Switch
-        android:id="@+id/power_switch"
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
-        android:text="@string/power_title"
-        android:textSize="25dp" />
+        android:layout_above="@+id/led_bar"
+        android:layout_centerHorizontal="true"
+        android:editable="false"
+        android:height="25dp"
+        android:width="200dp" />
+
+    <TextView
+        android:id="@+id/vehicle_speed_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_alignLeft="@+id/textView1"
+        android:text="@string/vehicle_speed"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/engine_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_below="@+id/pedal_position"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/vehicle_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_alignRight="@+id/textView1"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/pedal_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed_label"
+        android:layout_alignRight="@+id/textView1"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
 
 </RelativeLayout>

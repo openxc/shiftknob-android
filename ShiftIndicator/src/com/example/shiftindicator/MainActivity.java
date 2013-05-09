@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -71,8 +70,6 @@ public class MainActivity extends Activity {
     
 	private TextView mVehicleSpeedView;
 	private TextView mEngineSpeedView;
-	private TextView mShiftIndicator;
-	private TextView mShiftCalc;
 	private TextView mPedalView;
 	private TextView mGearPosition;
 	private Switch mPowerSwitch;
@@ -142,8 +139,6 @@ public class MainActivity extends Activity {
 	    bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	    mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
 	    mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
-	    mShiftIndicator = (TextView) findViewById(R.id.shift_indicator);
-	    mShiftCalc = (TextView) findViewById(R.id.shift_calculated);
 	    mPedalView = (TextView) findViewById(R.id.pedal_position);
 	    mGearPosition = (TextView) findViewById(R.id.gear_position);
 	    mLayout = findViewById(R.id.layout);
@@ -225,6 +220,7 @@ public class MainActivity extends Activity {
 				mVehicleManager.addListener(EngineSpeed.class, mEngineListener);
 				mVehicleManager.addListener(AcceleratorPedalPosition.class, mPedalListener);
 				mVehicleManager.addListener(ShiftRecommendation.class, mShiftRecommendation);
+				mVehicleManager.addListener(TransmissionGearPosition.class, mTransmissionGearPosition);
 			} catch(VehicleServiceException e) {
            	 	Log.w(TAG, "Couldn't add listeners for measurements", e);
 			} catch(UnrecognizedMeasurementTypeException e) {
@@ -262,7 +258,10 @@ public class MainActivity extends Activity {
 		            mEngineSpeedView.setText(""+engine_speed);
 		        }
 		    });
-		    shiftCalculation();
+		    
+		    if (!sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+		    	shiftCalculation();
+		    }
 		}
 	};		
 	
@@ -277,19 +276,56 @@ public class MainActivity extends Activity {
 		    });
 		}
 	};
+	
+	TransmissionGearPosition.Listener mTransmissionGearPosition = 
+			new TransmissionGearPosition.Listener() {
+		public void receive(Measurement measurement) {
+			final TransmissionGearPosition status = (TransmissionGearPosition) measurement;
+			
+			if (sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+				switch (status.getValue().enumValue()) {
+		        case FIRST:
+		            updateGear(1);
+		            break;
+		        case SECOND:
+		        	updateGear(2);
+		            break;
+		        case THIRD:
+		        	updateGear(3);
+		            break;
+		        case FOURTH:
+		        	updateGear(4);
+		            break;
+		        case FIFTH:
+		        	updateGear(5);
+		            break;
+		        case SIXTH:
+		        	updateGear(6);
+		            break;
+		        case NEUTRAL:
+		        	updateGear(0);
+		            break;
+		        case REVERSE:;
+		            break;
+		        }
+			}
+		}
+	};
     
 	ShiftRecommendation.Listener mShiftRecommendation = new ShiftRecommendation.Listener() {
 		public void receive(Measurement measurement) {
 		    final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
         	
-			if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT 
-					&& power_status) {
-        		shift();
-        	}
-        	
-        	else {
-        		cancelShift(shiftTime+600);
-        	}
+		    if (sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+				if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT 
+						&& power_status) {
+	        		shift();
+	        	}
+	        	
+	        	else {
+	        		cancelShift(shiftTime+600);
+	        	}
+		    }
 		}
 	};
 	
@@ -365,7 +401,7 @@ public class MainActivity extends Activity {
 	    if (next_rpm < vehicle_speed*next_ratio){
 	    	
 	    	if (!justShifted){
-	    		//shift();
+	    		shift();
     		}
     		cancelShift(currentTime);
 	    }
@@ -405,7 +441,6 @@ public class MainActivity extends Activity {
 		if (sharedPrefs.getBoolean("pref_visual_feedback", false)) {
 			MainActivity.this.runOnUiThread(new Runnable() {
 		        public void run() {
-		            mShiftCalc.setText("Shift!!");
 		            mLayout.setBackgroundColor(Color.WHITE);
 		        }
 		    });
@@ -422,7 +457,6 @@ public class MainActivity extends Activity {
 		if (t-shiftTime>500){
 			MainActivity.this.runOnUiThread(new Runnable() {
 				public void run() {
-					mShiftCalc.setText("");
 					mLayout.setBackgroundColor(Color.BLACK);
 				}
 			});
