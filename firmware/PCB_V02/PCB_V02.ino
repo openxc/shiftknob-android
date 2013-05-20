@@ -47,8 +47,8 @@ int clockPin = 8;
 int dataPin = 4;
 
 int motorPin = 5;
-long motor_on = 200; //number of milliseconds the motor vibrates
-long motor_off = 100; //pause between pulses
+int motor_on = 750; //number of milliseconds the motor vibrates
+int motor_off = 100; //pause between pulses
 
 int buttonPin = 2;
 
@@ -60,10 +60,10 @@ int digitLED = 6;
 String inputString = "";
 boolean stringComplete = false;
 boolean USB_connected = false;
-unsigned long time = 0;
+volatile unsigned long time = 0;
 
-int motorCount = 2;
-int motorPulse = 2;
+int motorCount = 1;
+int motorPulse = 1;
 volatile int motorState = LOW;
 boolean motorCommand = false;
 
@@ -85,7 +85,7 @@ void setup() {
   analogWrite(redLED, 100);
   analogWrite(greenLED, 100);
   
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -109,7 +109,7 @@ void loop() {
     }
   }
   
-  if (millis()-time >= motor_on && !motorCommand) {
+  if ((millis()-time) >= motor_on && !motorCommand) {
     motorState = LOW;
     digitalWrite(motorPin, motorState);
     motorPulse = motorCount;

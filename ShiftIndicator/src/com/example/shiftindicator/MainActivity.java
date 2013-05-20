@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
         if(mSerialPort == null){
             mSerialPort = new FTDriver(mUsbManager);
             mSerialPort.setPermissionIntent(mPermissionIntent);
-            mSerialStarted = mSerialPort.begin(115200);
+            mSerialStarted = mSerialPort.begin(9600);
             if (!mSerialStarted)
             {
                 Log.d(TAG, "mSerialPort.begin() failed.");
