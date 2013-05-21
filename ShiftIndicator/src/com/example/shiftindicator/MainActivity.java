@@ -60,7 +60,6 @@ public class MainActivity extends Activity {
     static boolean mSerialStarted = false;
     static FTDriver mSerialPort = null;
     
-    private PendingIntent mPermissionIntent;
     UsbManager mUsbManager = null;
     UsbDevice mGaugeDevice = null;
     UsbDeviceConnection mGaugeConnection = null;
@@ -150,13 +149,8 @@ public class MainActivity extends Activity {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				send2Arduino("color", progress*255/100);
 			}
-
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
-
-			public void onStopTrackingTouch(SeekBar seekBar) {			
-			}
-
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+			public void onStopTrackingTouch(SeekBar seekBar) {}
 	    });
 	    
 	    mPowerSwitch = (Switch) findViewById(R.id.power_switch);
@@ -169,23 +163,13 @@ public class MainActivity extends Activity {
 	    });
 	    
 	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-	    mPermissionIntent = PendingIntent.getBroadcast(this, 0,
-                new Intent(ACTION_USB_PERMISSION), 0);
-        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-        this.registerReceiver(mBroadcastReceiver, filter);
-        
-        if(mSerialPort == null){
-            mSerialPort = new FTDriver(mUsbManager);
-            mSerialPort.setPermissionIntent(mPermissionIntent);
-            mSerialStarted = mSerialPort.begin(9600);
-            if (!mSerialStarted)
-            {
-                Log.d(TAG, "mSerialPort.begin() failed.");
-            } else{
-                Log.d(TAG, "mSerialPort.begin() success!.");
-				send2Arduino("gear", 0);
-            }
-        }
+	    IntentFilter filter = new IntentFilter();
+	    filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+	    this.registerReceiver(mBroadcastReceiver, filter);
+	    
+	    filter = new IntentFilter();
+	    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+	    this.registerReceiver(mBroadcastReceiver, filter);
 	}
 	
 	@Override
@@ -495,32 +479,47 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                UsbDevice device = (UsbDevice) intent.getParcelableExtra(
-                        UsbManager.EXTRA_DEVICE);
-
-                if(intent.getBooleanExtra(
-                            UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    mSerialStarted = mSerialPort.begin(9600);
-                } 
-                
-                else {
-                    Log.i(TAG, "User declined permission for device " + device);
-                }
+            if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+            	Log.d(TAG, "Device detached.");
+            	mSerialPort = null;
             }
         }
     };
+    
+    private void connectToDevice() {
+    	if (mSerialPort != null) {
+    		mSerialPort.end();
+    	}
+    	mSerialPort = new FTDriver(mUsbManager);
+    	mSerialPort.setPermissionIntent(PendingIntent.getBroadcast(this, 0, 
+    			new Intent(ACTION_USB_PERMISSION), 0));
+    	mSerialStarted = mSerialPort.begin(FTDriver.BAUD9600);
+    	if (!mSerialStarted) {
+    		Log.d(TAG, "mSerialPort.begin() failed.");
+    	} else {
+    		Log.d(TAG, "mSerialPort.begin() success!");
+    		send2Arduino("gear", 0);
+    	}
+    }
+
+    @Override
+    public void onResume() {
+    	Log.d(TAG,"this was called.");
+        super.onResume();
+        connectToDevice();
+    }
     
     public void onExit(View view){
 
         if (mSerialPort != null){
             mSerialPort.end();
-        }
+        } 
         if(mIsBound) {
             Log.i(TAG, "Unbinding from vehicle service before exit");
             unbindService(mConnection);
             mIsBound = false;
         }
+        Log.d(TAG,"Closing");
         finish();
         System.exit(0);
     }
