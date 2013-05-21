@@ -329,14 +329,14 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	/* shiftCalculation is the main function of this class. In the event 
+	/** shiftCalculation is the main function of this class. In the event 
 	 * that a vehicle is not equipped with a built-in "ShiftRecommendation" 
 	 * signal on CAN, this function will calculate the upshift point locally. 
 	 * The gear position and shift point are then sent to the shift knob. 
 	 */
 	public void shiftCalculation() {
 		
-		/* GEAR POSITION CALCULATION:
+		/** GEAR POSITION CALCULATION:
 		 * First calculate gear based on ratio of rpm to speed.
 		 * The for loop compares known gear ratios with the 
 		 * calculated ratio. 
@@ -364,7 +364,7 @@ public class MainActivity extends Activity {
 	    
 	    if (!power_status) return;
 	    
-	    /* SHIFT CALCULATION:
+	    /** SHIFT CALCULATION:
 	     * The upshift signal is based on throttle position and the rpm
 	     * of the engine in the NEXT gear. The higher the throttle position,
 	     * the higher the rpm in the next gear (quick acceleration). 
@@ -378,7 +378,7 @@ public class MainActivity extends Activity {
 	    	return;
 	    }
 	    
-	    /* If the pedal position is above the minimum threshold, then the driver
+	    /** If the pedal position is above the minimum threshold, then the driver
 	     * is thought to be holding a constant speed or accelerating and thus 
 	     * the shift signal point should be calculated.
 	     * 
@@ -408,7 +408,7 @@ public class MainActivity extends Activity {
 	    else cancelShift(currentTime);
 	}
 
-	/* updateGear takes the calculated gear position and sends that value
+	/** updateGear takes the calculated gear position and sends that value
 	 * to the shift knob. The gear position is enclosed in '<' ___ '>'
 	 */
 	private void updateGear(final int g) {
@@ -424,7 +424,7 @@ public class MainActivity extends Activity {
 		currentGear = g;
 	}
 	
-	/* shift() handles all UI and shift knob functions for sending
+	/** shift() handles all UI and shift knob functions for sending
 	 * shift indication messages to the driver. It checks the settings 
 	 * to see which signals to send, and then send the corresponding
 	 * signals to the proper places. 
@@ -450,7 +450,7 @@ public class MainActivity extends Activity {
 		shiftTime = new Date().getTime();
 	}
 	
-	/* cancelShift removes the "upshift message" from the UI screen after a given
+	/** cancelShift removes the "upshift message" from the UI screen after a given
 	 * amount of time.
 	 */
 	private void cancelShift(long t) {
