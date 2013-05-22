@@ -462,6 +462,10 @@ public class MainActivity extends Activity {
 			outString = '('+Integer.toString(value)+')';
 		}
 		
+		if (signal.equals("connect")) {
+			outString = '{'+Integer.toString(value)+'}';
+		}
+		
 		char[] outMessage = outString.toCharArray();
         byte outBuffer[] = new byte[20];
         for(int i=0; i<outString.length(); i++)
@@ -493,12 +497,29 @@ public class MainActivity extends Activity {
     	mSerialPort = new FTDriver(mUsbManager);
     	mSerialPort.setPermissionIntent(PendingIntent.getBroadcast(this, 0, 
     			new Intent(ACTION_USB_PERMISSION), 0));
-    	mSerialStarted = mSerialPort.begin(FTDriver.BAUD9600);
+    	mSerialStarted = mSerialPort.begin(FTDriver.BAUD115200);
     	if (!mSerialStarted) {
     		Log.d(TAG, "mSerialPort.begin() failed.");
     	} else {
     		Log.d(TAG, "mSerialPort.begin() success!");
-    		send2Arduino("gear", 0);
+    		send2Arduino("connect", 1);
+    		byte[] readBuffer = new byte[10];
+    		int dataIn = 0;
+    		boolean readSuccess = false;
+			try {
+				for (int i=0; i<25; i++) {
+					dataIn = mSerialPort.read(readBuffer);
+					if (dataIn > 0) {
+						readSuccess = true;
+						Log.d(TAG, "Read from serial: "+dataIn+" @ "+i);
+						send2Arduino("gear", 0);
+						break;
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Log.d(TAG, "couldn't read Serial.");
+			}
     	}
     }
 

@@ -85,7 +85,7 @@ void setup() {
   analogWrite(redLED, 100);
   analogWrite(greenLED, 100);
   
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
@@ -125,6 +125,9 @@ void loop() {
   if (stringComplete) {
     int index = inputString.length()-2;
     
+    if (inputString[inputString.length()-1] == '}') {
+      Serial.print('1');
+    }
     if (inputString[inputString.length()-1] == '>') {
       int gear_pos = (inputString[index] - '0');
       sendDigit(all_digits[gear_pos]);
@@ -185,7 +188,7 @@ void serialEvent() {
   while (Serial.available()) {
     char inChar = (char)Serial.read();
     inputString += inChar;
-    if (inChar == '>' || inChar == ']' || inChar == ')') {
+    if (inChar == '>' || inChar == ']' || inChar == ')' || inChar == '}') {
       stringComplete = true;
     }
   }
