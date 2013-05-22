@@ -504,7 +504,6 @@ public class MainActivity extends Activity {
 
     @Override
     public void onResume() {
-    	Log.d(TAG,"this was called.");
         super.onResume();
         connectToDevice();
     }
