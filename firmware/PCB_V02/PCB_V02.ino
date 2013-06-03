@@ -1,6 +1,4 @@
-#include <aJSON.h>
-
- /*
+/*
 -------------------------------------------------
 | Zachary Nelson
 | znelson1@ford.com
@@ -68,8 +66,6 @@ int motorCount = 1;
 int motorPulse = 1;
 volatile int motorState = LOW;
 boolean motorCommand = false;
-
-aJsonStream serial_stream(&Serial);
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -174,16 +170,6 @@ void loop() {
     
     inputString = "";
     stringComplete = false;
-  }
-  
-  if (serial_stream.available()) {
-    serial_stream.skip();
-  }
-  
-  if (serial_stream.available()) {
-    aJsonObject *msg = aJson.parse(&serial_stream);
-    
-    aJson.deleteItem(msg);
   }
 }
 
