@@ -164,10 +164,6 @@ public class MainActivity extends Activity {
 	    
 	    mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 	    IntentFilter filter = new IntentFilter();
-	    filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-	    this.registerReceiver(mBroadcastReceiver, filter);
-	    
-	    filter = new IntentFilter();
 	    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
 	    this.registerReceiver(mBroadcastReceiver, filter);
 	}
@@ -478,50 +474,40 @@ public class MainActivity extends Activity {
             Log.d(TAG, "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
         }
 	}
-	
-	private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-            	Log.d(TAG, "Device detached.");
-            	mSerialPort = null;
+                Log.d(TAG, "Device detached");
+                Bundle extras = intent.getExtras();
+                UsbDevice lostDevice = (UsbDevice)extras.get("device");
+                if(lostDevice.equals(mSerialPort.getDevice())) {
+                	mSerialPort.end();
+                } 
             }
         }
     };
-    
+   
     private void connectToDevice() {
-    	if (mSerialPort != null) {
-    		mSerialPort.end();
-    	}
-    	mSerialPort = new FTDriver(mUsbManager);
-    	mSerialPort.setPermissionIntent(PendingIntent.getBroadcast(this, 0, 
-    			new Intent(ACTION_USB_PERMISSION), 0));
-    	mSerialStarted = mSerialPort.begin(FTDriver.BAUD115200);
-    	if (!mSerialStarted) {
-    		Log.d(TAG, "mSerialPort.begin() failed.");
-    	} else {
-    		Log.d(TAG, "mSerialPort.begin() success!");
-    		send2Arduino("connect", 1);
-    		byte[] readBuffer = new byte[10];
-    		int dataIn = 0;
-    		boolean readSuccess = false;
-			try {
-				for (int i=0; i<25; i++) {
-					dataIn = mSerialPort.read(readBuffer);
-					if (dataIn > 0) {
-						readSuccess = true;
-						Log.d(TAG, "Read from serial: "+dataIn+" @ "+i);
-						send2Arduino("gear", 0);
-						break;
-					}
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				Log.d(TAG, "couldn't read Serial.");
-			}
-    	}
-    }
+        if(mSerialPort == null) {
+       	 mSerialPort = new FTDriver(mUsbManager);
+        }
+        
+        if(mSerialPort.isConnected()) {
+       	 return;
+        }
+
+        mSerialPort.begin(FTDriver.BAUD115200);
+        if (!mSerialPort.isConnected())
+        {
+            Log.d(TAG, "mSerialPort.begin() failed.");
+        } else {
+            Log.d(TAG, "mSerialPort.begin() success!.");
+			send2Arduino("gear", 0);				
+        }
+   }
 
     @Override
     public void onResume() {
