@@ -1,3 +1,5 @@
+#include <aJSON.h>
+
 /*
 -------------------------------------------------
 | Zachary Nelson
@@ -5,18 +7,32 @@
 | 
 | **To be used with Shift Knob PCBs**
 |
-| Test communication over USB with Android host 
-| to read in and display current gear.
+| This program reads in a JSON stream and controls
+| the following 3 components accordingly:
+| 
+| 1. 7 segment display
+| 2. Haptic feedback motor
+| 3. RGB LEDs
 |
-| Using a 74hc595 shift register and a
-| 7-sement display to display the numbers 0 - 9. It
-| is used to test future implementations of the 
-| display control.
+| Below is a list of the current support JSON messages:
+|
+|  {"name": "shift", "value": true}  value is a boolean
+|  {"name": "color", "value": 100}   value is an integer 0 to 255
+|  {"name": "gear", "value": 1}      value is 0 to 9
+|
+| A 74hc595 shift register and is used to control the
+| 7-sement display. RGB LEDs are controlled with 3 PWM 
+| pins and the Haptic feedback motor is controlled with
+| another PWM pin. 
+|
+| There is also a PWM pin connection for controlling the
+| brightness of the 7 segment display, but this functionality
+| has not yet been implemented.
 ---------------------------------------------------
 */
 
 // 0bEDC*BAFG
-//7segment digits.
+//7 segment digits.
 const byte all_digits[10] = {
   0b11111110,0b11010111,0b00110010,0b10010010, //-,1,2,3
   0b11010100,0b10011000,0b00011100,0b11010011, //4,5,6,7
@@ -55,10 +71,8 @@ int buttonPin = 2;
 int redLED = 9; //pwm
 int blueLED = 10; //pwm
 int greenLED = 11; //pwm
-int digitLED = 6;
+int digitLED = 6; //pwm. 7 segment brightness
 
-String inputString = "";
-boolean stringComplete = false;
 boolean USB_connected = false;
 volatile unsigned long time = 0;
 
@@ -66,6 +80,8 @@ int motorCount = 1;
 int motorPulse = 1;
 volatile int motorState = LOW;
 boolean motorCommand = false;
+
+aJsonStream serial_stream(&Serial);
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -115,62 +131,79 @@ void loop() {
     motorPulse = motorCount;
   }
   
+  if (serial_stream.available()) {
+    serial_stream.skip();
+  }
+  
+  if (serial_stream.available()) {
+    USB_connected = true;
+    aJsonObject *msg = aJson.parse(&serial_stream);
+    processMessage(msg);
+    aJson.deleteItem(msg);
+  }
+  
   if (!USB_connected) {
     for (int c = 0; c < 6; c++) {
       sendDigit(circle[c]);
       delay(50);
     }
   }
+}
+
+/*
+ Three cases so far:
+ {"name": "shift", "value": 1}     value is an integer. either 1 or 0.
+ {"name": "color", "value": 100}   value is an integer 0 to 255
+ {"name": "gear", "value": 5}      value is 0 to 9
+*/
+void processMessage(aJsonObject *msg) {
+  aJsonObject *name = aJson.getObjectItem(msg, "name");
+  aJsonObject *value = aJson.getObjectItem(msg, "value");
   
-  if (stringComplete) {
-    int index = inputString.length()-2;
-    
-    if (inputString[inputString.length()-1] == '}') {
-      Serial.print('1');
-    }
-    if (inputString[inputString.length()-1] == '>') {
-      int gear_pos = (inputString[index] - '0');
-      sendDigit(all_digits[gear_pos]);
-    }
-    
-    if (inputString[inputString.length()-1] == ']') {
-      motorState = HIGH;
-      motorCommand = true;
-      digitalWrite(motorPin, motorState);
-      motorPulse -= 1;
-      time = millis();
-    }
-    
-    if (inputString[inputString.length()-1] == ')') {
-      int LED_value = 0;
-      int scale = 1;
-      for (int i = inputString.length()-2; i > 0; i--) {
-        LED_value += (inputString[i] - '0')*scale;
-        scale *= 10;
-      }
-      
-      if (LED_value >= 0 && LED_value <= 85) {
-        analogWrite(redLED, -1*LED_value*255/85+255);
-        analogWrite(greenLED, LED_value*255/85);
-        analogWrite(blueLED, 0);
-      }
-      
-      if (LED_value > 85 && LED_value <= 170) {
-        analogWrite(greenLED, -1*(LED_value-85)*255/85+255);
-        analogWrite(blueLED, (LED_value-85)*255/85);
-        analogWrite(redLED, 0);
-      }
-      
-      if (LED_value > 170 && LED_value <= 255) {
-        analogWrite(blueLED, -1*(LED_value-170)*255/85+255);
-        analogWrite(redLED, (LED_value-170)*255/85);
-        analogWrite(greenLED, 0);
-      } 
-    }
-    
-    inputString = "";
-    stringComplete = false;
+  if (!name) {
+    Serial.println("no useable data");
+    return;
   }
+  
+  String sName = name->valuestring;
+  int iValue = value->valueint;
+  
+  if (sName == "gear") {
+    sendDigit(all_digits[iValue]);
+    return;
+  }
+  
+  if (sName == "shift" && iValue) {
+    motorState = HIGH;
+    motorCommand = true;
+    digitalWrite(motorPin, motorState);
+    motorPulse -= 1;
+    time = millis();
+    return;
+  }
+  
+  if (sName == "color") {
+    int LED_value = iValue;
+      
+    if (LED_value >= 0 && LED_value <= 85) {
+      analogWrite(redLED, -1*LED_value*255/85+255);
+      analogWrite(greenLED, LED_value*255/85);
+      analogWrite(blueLED, 0);
+    }
+    
+    if (LED_value > 85 && LED_value <= 170) {
+      analogWrite(greenLED, -1*(LED_value-85)*255/85+255);
+      analogWrite(blueLED, (LED_value-85)*255/85);
+      analogWrite(redLED, 0);
+    }
+    
+    if (LED_value > 170 && LED_value <= 255) {
+      analogWrite(blueLED, -1*(LED_value-170)*255/85+255);
+      analogWrite(redLED, (LED_value-170)*255/85);
+      analogWrite(greenLED, 0);
+    }
+    return;
+  }  
 }
 
 void sendDigit(int i){
@@ -181,15 +214,4 @@ void sendDigit(int i){
   shiftOut(dataPin, clockPin, LSBFIRST, i);  
   //take the latch pin high so the LEDs will light up:
   digitalWrite(latchPin, HIGH);
-}
-
-void serialEvent() {
-  USB_connected = true;
-  while (Serial.available()) {
-    char inChar = (char)Serial.read();
-    inputString += inChar;
-    if (inChar == '>' || inChar == ']' || inChar == ')' || inChar == '}') {
-      stringComplete = true;
-    }
-  }
 }
