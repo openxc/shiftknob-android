@@ -20,4 +20,10 @@
         <item name="fuel_economy">fuel_economy</item>
     </string-array>
     
+    <string-array name="vehicles">
+    	<item>Figo</item>
+        <item>Focus ST</item>
+        <item>Mustang GT</item>
+    </string-array>
+    
 </resources>

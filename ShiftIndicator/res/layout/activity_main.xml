@@ -109,4 +109,14 @@
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
 
+    <Spinner
+    	android:id="@+id/vehicle_selector"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@+id/led_bar"
+    	android:layout_centerHorizontal="true"
+    	android:entries="@array/vehicles"
+    	android:prompt="@string/vehicle_prompt"
+    	android:textSize="25sp" />
+
 </RelativeLayout>

@@ -38,12 +38,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -65,6 +69,7 @@ public class MainActivity extends Activity {
     private TextView mEngineSpeedView;
     private TextView mPedalView;
     private TextView mGearPosition;
+    private Spinner mVehicleSpinner;
     private Switch mPowerSwitch;
     private boolean power_status = true;
     private SeekBar mLEDbar;
@@ -78,44 +83,12 @@ public class MainActivity extends Activity {
     boolean justShifted;
     int next_ratio = 1;
 
-// * VEHICLE SPECIFIC DATA *//
-
-// FIGO RATIOS rpm/speed
-//    private int[] gearRatios = {
-//            0, // Neutral
-//        140, // 1st
-//        75, // 2nd
-//        50, // 3rd
-//        37, // 4th
-//        30, // 5th
-//    };
-//    private double base_pedal_position = 15.0;
-//    private int min_rpm = 1300;
-
-//    Mustang GT RATIOS rpm/speed
-//    private int[] gearRatios = {
-//            0, // Neutral
-//        100, // 1st
-//        66, // 2nd
-//        46, // 3rd
-//        35, // 4th
-//        27, // 5th
-//        18 // 6th
-//    };
-//    private double base_pedal_position = 10.0;
-//    private int min_rpm = 1600;
-
-    // Focus ST RATIOS rpm/speed:
-    private int[] gearRatios = { 0, // Neutral
-            114, // 1st
-            69, // 2nd
-            46, // 3rd
-            36, // 4th
-            28, // 5th
-            23 // 6th
-    };
-    private double base_pedal_position = 15.0;
-    private int min_rpm = 1300;
+    private int[] gearRatios;
+    private double base_pedal_position;
+    private int min_rpm;
+    private double aVariable = 0.0;
+    private double bVariable = 0.0;
+    private double cVariable = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +106,8 @@ public class MainActivity extends Activity {
         mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
         mPedalView = (TextView) findViewById(R.id.pedal_position);
         mGearPosition = (TextView) findViewById(R.id.gear_position);
+        addVehicleSpinnerListener();
+        
         mLayout = findViewById(R.id.layout);
         mLayout.setBackgroundColor(Color.BLACK);
 
@@ -311,6 +286,75 @@ public class MainActivity extends Activity {
         }
     };
 
+    public void addVehicleSpinnerListener() {
+        mVehicleSpinner = (Spinner) findViewById(R.id.vehicle_selector);
+        mVehicleSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int pos, long id) {
+                String selectedVehicle = parent.getItemAtPosition(pos).toString();
+                Toast.makeText(parent.getContext(), 
+                        "Selected Vehicle: "+selectedVehicle, Toast.LENGTH_SHORT).show();
+                // Load Vehicle-Specific Data: //
+                if (selectedVehicle.equals("Figo")) {
+                    gearRatios = new int[]{
+                          0, // Neutral
+                          140, // 1st
+                          75, // 2nd
+                          50, // 3rd
+                          37, // 4th
+                          30, // 5th
+                    };
+                    base_pedal_position = 15.0;
+                    min_rpm = 1300;
+                    aVariable = 1.2;
+                    bVariable = -30;
+                    cVariable = 1300;
+                }
+                
+                if (selectedVehicle.equals("Focus ST")) { 
+                    gearRatios = new int[]{ 
+                          0, // Neutral
+                          114, // 1st
+                          69, // 2nd
+                          46, // 3rd
+                          36, // 4th
+                          28, // 5th
+                          23 // 6th
+                    };
+                    base_pedal_position = 15.0;
+                    min_rpm = 1300;
+                    aVariable = 1.2;
+                    bVariable = -30;
+                    cVariable = 1300;
+                }
+                
+                if (selectedVehicle.equals("Mustang GT")) {
+                    gearRatios = new int[] {
+                          0, // Neutral
+                          100, // 1st
+                          66, // 2nd
+                          46, // 3rd
+                          35, // 4th
+                          27, // 5th
+                          18 // 6th
+                    };
+                    base_pedal_position = 10.0;
+                    min_rpm = 1600;
+                    aVariable = 1.3;
+                    bVariable = -20;
+                    cVariable = 1680;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) { 
+            }
+            
+        });
+    }
+    
     /**
      * shiftCalculation is the main function of this class. In the event that a
      * vehicle is not equipped with a built-in "ShiftRecommendation" signal on
@@ -371,9 +415,11 @@ public class MainActivity extends Activity {
          * the shift signal point should be calculated.
          * 
          * Values A, B, and C of the algorithm below must be optimized for each
-         * specific vehicle.
+         * specific vehicle. These values can be changed in the Vehicle-Specific
+         * Section above.
          * 
-         * next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C TEMPLATE
+         * TEMPLATE:
+         *   next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C 
          * 
          * If the calculated next_rpm is less than rpm the vehicle would be if
          * shifted to the next gear, the shift signal is sent to the shift knob.
@@ -381,9 +427,7 @@ public class MainActivity extends Activity {
 
         double next_rpm;
         if (pedal_pos >= base_pedal_position) {
-            // next_rpm = 1.3*(pedal_pos)*(pedal_pos)-20*pedal_pos+1680; //GT
-            // Mustang
-            next_rpm = 1.2 * (pedal_pos) * (pedal_pos) - 30 * pedal_pos + 1300; // Figo/Focus
+            next_rpm = aVariable * (pedal_pos) * (pedal_pos) + bVariable * pedal_pos + cVariable;
         } else
             next_rpm = min_rpm;
 
@@ -398,7 +442,7 @@ public class MainActivity extends Activity {
     }
 
 /** updateGear takes the calculated gear position and sends that value
-	 * to the shift knob. The gear position is enclosed in '<' ___ '>'
+	 * to the shift knob.
 	 */
     private void updateGear(final int g) {
         MainActivity.this.runOnUiThread(new Runnable() {

@@ -27,5 +27,7 @@
 	<string name="pref_mode_off">Performance</string>
 	<string name="pref_mode_on">Fuel Economy</string>
 	<string name="pref_mode_summary">Fuel Economy/Performance</string>
+	
+	<string name="vehicle_prompt">Choose a Vehicle</string>
 
 </resources>
