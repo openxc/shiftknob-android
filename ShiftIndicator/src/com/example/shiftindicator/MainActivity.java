@@ -445,25 +445,26 @@ public class MainActivity extends Activity {
 	
 	public void send2Arduino(String signal, int value){
 		
-		String outString = null;
-		if (signal.equals("shift")) {
-			outString = '['+Integer.toString(value)+']';
-		}
+//		String outString = null;
+//		if (signal.equals("shift")) {
+//			outString = '['+Integer.toString(value)+']';
+//		}
+//		
+//		if (signal.equals("gear")) {
+//			outString = '<'+Integer.toString(value)+'>';
+//		}
+//		
+//		if (signal.equals("color")) {
+//			outString = '('+Integer.toString(value)+')';
+//		}
+//		
+//		if (signal.equals("connect")) {
+//			outString = '{'+Integer.toString(value)+'}';
+//		}
 		
-		if (signal.equals("gear")) {
-			outString = '<'+Integer.toString(value)+'>';
-		}
-		
-		if (signal.equals("color")) {
-			outString = '('+Integer.toString(value)+')';
-		}
-		
-		if (signal.equals("connect")) {
-			outString = '{'+Integer.toString(value)+'}';
-		}
-		
+		String outString = JsonBuilder.builder(signal, value);
 		char[] outMessage = outString.toCharArray();
-        byte outBuffer[] = new byte[20];
+        byte outBuffer[] = new byte[64];
         for(int i=0; i<outString.length(); i++)
         {
             outBuffer[i] = (byte)outMessage[i];
