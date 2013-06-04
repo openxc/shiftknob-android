@@ -71,21 +71,21 @@ public class MainActivity extends Activity {
     private TextView mGearPosition;
     private Spinner mVehicleSpinner;
     private Switch mPowerSwitch;
-    private boolean power_status = true;
+    private boolean powerStatus = true;
     private SeekBar mLEDbar;
     private View mLayout;
-    private int engine_speed;
-    private double vehicle_speed;
-    private double pedal_pos;
+    private int engineSpeed;
+    private double vehicleSpeed;
+    private double pedalPos;
     private long shiftTime;
 
     private int currentGear;
     boolean justShifted;
-    int next_ratio = 1;
+    int nextRatio = 1;
 
     private int[] gearRatios;
-    private double base_pedal_position;
-    private int min_rpm;
+    private double basePedalPosition;
+    private int minRPM;
     private double aVariable = 0.0;
     private double bVariable = 0.0;
     private double cVariable = 0.0;
@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
         mPowerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-                power_status = isChecked;
+                powerStatus = isChecked;
             }
         });
 
@@ -195,12 +195,12 @@ public class MainActivity extends Activity {
     VehicleSpeed.Listener mSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             final VehicleSpeed updated_value = (VehicleSpeed) measurement;
-            vehicle_speed = updated_value.getValue().doubleValue();
+            vehicleSpeed = updated_value.getValue().doubleValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     // send vehicle speed with 1 decimal point
                     mVehicleSpeedView.setText(""
-                            + Math.round(vehicle_speed * 10) / 10);
+                            + Math.round(vehicleSpeed * 10) / 10);
                 }
             });
         }
@@ -209,10 +209,10 @@ public class MainActivity extends Activity {
     EngineSpeed.Listener mEngineListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             final EngineSpeed updated_value = (EngineSpeed) measurement;
-            engine_speed = updated_value.getValue().intValue();
+            engineSpeed = updated_value.getValue().intValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    mEngineSpeedView.setText("" + engine_speed);
+                    mEngineSpeedView.setText("" + engineSpeed);
                 }
             });
 
@@ -225,10 +225,10 @@ public class MainActivity extends Activity {
     AcceleratorPedalPosition.Listener mPedalListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             final AcceleratorPedalPosition updated_value = (AcceleratorPedalPosition) measurement;
-            pedal_pos = updated_value.getValue().doubleValue();
+            pedalPos = updated_value.getValue().doubleValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    mPedalView.setText("" + (int) pedal_pos);
+                    mPedalView.setText("" + (int) pedalPos);
                 }
             });
         }
@@ -275,7 +275,7 @@ public class MainActivity extends Activity {
 
             if (sharedPrefs.getBoolean("pref_calculation_mode", false)) {
                 if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT
-                        && power_status) {
+                        && powerStatus) {
                     shift();
                 }
 
@@ -306,8 +306,8 @@ public class MainActivity extends Activity {
                           37, // 4th
                           30, // 5th
                     };
-                    base_pedal_position = 15.0;
-                    min_rpm = 1300;
+                    basePedalPosition = 15.0;
+                    minRPM = 1300;
                     aVariable = 1.2;
                     bVariable = -30;
                     cVariable = 1300;
@@ -323,8 +323,8 @@ public class MainActivity extends Activity {
                           28, // 5th
                           23 // 6th
                     };
-                    base_pedal_position = 15.0;
-                    min_rpm = 1300;
+                    basePedalPosition = 15.0;
+                    minRPM = 1300;
                     aVariable = 1.2;
                     bVariable = -30;
                     cVariable = 1300;
@@ -340,8 +340,8 @@ public class MainActivity extends Activity {
                           27, // 5th
                           18 // 6th
                     };
-                    base_pedal_position = 10.0;
-                    min_rpm = 1600;
+                    basePedalPosition = 10.0;
+                    minRPM = 1600;
                     aVariable = 1.3;
                     bVariable = -20;
                     cVariable = 1680;
@@ -368,16 +368,16 @@ public class MainActivity extends Activity {
          * to speed. The for loop compares known gear ratios with the calculated
          * ratio.
          */
-        if (vehicle_speed == 0)
-            vehicle_speed = 1;
-        double ratio = engine_speed / vehicle_speed;
+        if (vehicleSpeed == 0)
+            vehicleSpeed = 1;
+        double ratio = engineSpeed / vehicleSpeed;
         long currentTime = new Date().getTime();
 
         for (int i = 1; i < gearRatios.length; i++) {
             if (gearRatios[i] * .9 < ratio && gearRatios[i] * 1.1 > ratio) {
-                if (next_ratio != gearRatios[i])
+                if (nextRatio != gearRatios[i])
                     justShifted = false;
-                next_ratio = gearRatios[i];
+                nextRatio = gearRatios[i];
                 updateGear(i);
                 break;
             }
@@ -392,7 +392,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        if (!power_status)
+        if (!powerStatus)
             return;
 
         /**
@@ -404,7 +404,7 @@ public class MainActivity extends Activity {
          * probably shifting or slowing down, so no shift signal is needed.
          */
 
-        if (pedal_pos < 10) {
+        if (pedalPos < 10) {
             cancelShift(currentTime);
             return;
         }
@@ -425,13 +425,13 @@ public class MainActivity extends Activity {
          * shifted to the next gear, the shift signal is sent to the shift knob.
          */
 
-        double next_rpm;
-        if (pedal_pos >= base_pedal_position) {
-            next_rpm = aVariable * (pedal_pos) * (pedal_pos) + bVariable * pedal_pos + cVariable;
+        double nextRPM;
+        if (pedalPos >= basePedalPosition) {
+            nextRPM = aVariable * (pedalPos) * (pedalPos) + bVariable * pedalPos + cVariable;
         } else
-            next_rpm = min_rpm;
+            nextRPM = minRPM;
 
-        if (next_rpm < vehicle_speed * next_ratio) {
+        if (nextRPM < vehicleSpeed * nextRatio) {
 
             if (!justShifted) {
                 shift();
