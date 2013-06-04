@@ -33,7 +33,7 @@
 
 // 0bEDC*BAFG
 //7 segment digits.
-const byte all_digits[10] = {
+const byte allDigits[10] = {
   0b11111110,0b11010111,0b00110010,0b10010010, //-,1,2,3
   0b11010100,0b10011000,0b00011100,0b11010011, //4,5,6,7
   0b00010000,0b10010000};                    //8,9
@@ -63,8 +63,8 @@ int clockPin = 8;
 int dataPin = 4;
 
 int motorPin = 5;
-int motor_on = 750; //number of milliseconds the motor vibrates
-int motor_off = 100; //pause between pulses
+int motorOn = 750; //number of milliseconds the motor vibrates
+int motorOff = 100; //pause between pulses
 
 int buttonPin = 2;
 
@@ -73,7 +73,7 @@ int blueLED = 10; //pwm
 int greenLED = 11; //pwm
 int digitLED = 6; //pwm. 7 segment brightness
 
-boolean USB_connected = false;
+boolean usbConnected = false;
 volatile unsigned long time = 0;
 
 int motorCount = 1;
@@ -81,7 +81,7 @@ int motorPulse = 1;
 volatile int motorState = LOW;
 boolean motorCommand = false;
 
-aJsonStream serial_stream(&Serial);
+aJsonStream serialStream(&Serial);
 
 void setup() {
   //set pins to output so you can control the shift register
@@ -107,13 +107,13 @@ void setup() {
 void loop() {
   
   //handle motor control
-  if (motorState == HIGH && (millis() - time) >= motor_on && motorCommand) {
+  if (motorState == HIGH && (millis() - time) >= motorOn && motorCommand) {
     motorState = LOW;
     digitalWrite(motorPin, motorState);
     time = millis();
   }
   
-  if (motorState == LOW && (millis() - time) >= motor_off 
+  if (motorState == LOW && (millis() - time) >= motorOff 
                           && motorPulse > 0 && motorCommand) {
     motorState = HIGH;
     digitalWrite(motorPin, motorState);
@@ -125,24 +125,24 @@ void loop() {
     }
   }
   
-  if ((millis()-time) >= motor_on && !motorCommand) {
+  if ((millis()-time) >= motorOn && !motorCommand) {
     motorState = LOW;
     digitalWrite(motorPin, motorState);
     motorPulse = motorCount;
   }
   
-  if (serial_stream.available()) {
-    serial_stream.skip();
+  if (serialStream.available()) {
+    serialStream.skip();
   }
   
-  if (serial_stream.available()) {
-    USB_connected = true;
-    aJsonObject *msg = aJson.parse(&serial_stream);
+  if (serialStream.available()) {
+    usbConnected = true;
+    aJsonObject *msg = aJson.parse(&serialStream);
     processMessage(msg);
     aJson.deleteItem(msg);
   }
   
-  if (!USB_connected) {
+  if (!usbConnected) {
     for (int c = 0; c < 6; c++) {
       sendDigit(circle[c]);
       delay(50);
@@ -169,7 +169,7 @@ void processMessage(aJsonObject *msg) {
   int iValue = value->valueint;
   
   if (sName == "gear") {
-    sendDigit(all_digits[iValue]);
+    sendDigit(allDigits[iValue]);
     return;
   }
   
@@ -183,23 +183,23 @@ void processMessage(aJsonObject *msg) {
   }
   
   if (sName == "color") {
-    int LED_value = iValue;
+    int valueLED = iValue;
       
-    if (LED_value >= 0 && LED_value <= 85) {
-      analogWrite(redLED, -1*LED_value*255/85+255);
-      analogWrite(greenLED, LED_value*255/85);
+    if (valueLED >= 0 && valueLED <= 85) {
+      analogWrite(redLED, -1*valueLED*255/85+255);
+      analogWrite(greenLED, valueLED*255/85);
       analogWrite(blueLED, 0);
     }
     
-    if (LED_value > 85 && LED_value <= 170) {
-      analogWrite(greenLED, -1*(LED_value-85)*255/85+255);
-      analogWrite(blueLED, (LED_value-85)*255/85);
+    if (valueLED > 85 && valueLED <= 170) {
+      analogWrite(greenLED, -1*(valueLED-85)*255/85+255);
+      analogWrite(blueLED, (valueLED-85)*255/85);
       analogWrite(redLED, 0);
     }
     
-    if (LED_value > 170 && LED_value <= 255) {
-      analogWrite(blueLED, -1*(LED_value-170)*255/85+255);
-      analogWrite(redLED, (LED_value-170)*255/85);
+    if (valueLED > 170 && valueLED <= 255) {
+      analogWrite(blueLED, -1*(valueLED-170)*255/85+255);
+      analogWrite(redLED, (valueLED-170)*255/85);
       analogWrite(greenLED, 0);
     }
     return;
