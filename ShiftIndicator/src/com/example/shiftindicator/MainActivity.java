@@ -427,7 +427,7 @@ public class MainActivity extends Activity {
 
         double nextRPM;
         if (pedalPos >= basePedalPosition) {
-            nextRPM = aVariable * (pedalPos) * (pedalPos) + bVariable * pedalPos + cVariable;
+            nextRPM = aVariable * pedalPos * pedalPos + bVariable * pedalPos + cVariable;
         } else
             nextRPM = minRPM;
 
