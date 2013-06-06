@@ -106,13 +106,21 @@ void setup() {
 
 void loop() {
   
-  //handle motor control
+  // Is the motor on? If so, has it been on for more time than motorOn?
+  // Is the motorCommand still ON or has it been turned off by other logic?
+  // If all true, then turn off the motor and record the time.
   if (motorState == HIGH && (millis() - time) >= motorOn && motorCommand) {
     motorState = LOW;
     digitalWrite(motorPin, motorState);
     time = millis();
   }
   
+  // Is the motor off? Is so, has it been off for more time than motorOff?
+  // Is there a pulse count remaining in motorPulse?
+  // Is the motorCommand still ON or has it been turned off by other logic?
+  // If all true, then turn on the motor, decrease the pulse count by 1 
+  // and record the time. If the pulse count goes to 0 then turn off the 
+  // motorCommand. The last haptic pulse has been sent.
   if (motorState == LOW && (millis() - time) >= motorOff 
                           && motorPulse > 0 && motorCommand) {
     motorState = HIGH;
@@ -125,6 +133,9 @@ void loop() {
     }
   }
   
+  // If the motor has been on for time = motorOn and the motorCommand
+  // has been switched to false, then turn off the motor, stop the haptic
+  // feedback and reset the motorPulse to the original motorCount.
   if ((millis()-time) >= motorOn && !motorCommand) {
     motorState = LOW;
     digitalWrite(motorPin, motorState);
@@ -142,6 +153,8 @@ void loop() {
     aJson.deleteItem(msg);
   }
   
+  // Until USB has been connected, display a spinning wheel on
+  // the 7 segment display.
   if (!usbConnected) {
     for (int c = 0; c < 6; c++) {
       sendDigit(circle[c]);
