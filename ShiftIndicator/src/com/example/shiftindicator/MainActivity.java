@@ -505,7 +505,7 @@ public class MainActivity extends Activity {
         String outString = JsonBuilder.builder(signal, value);
         
         char[] outMessage = outString.toCharArray();
-        byte outBuffer[] = new byte[64];
+        byte outBuffer[] = new byte[outMessage.length];
         for (int i = 0; i < outString.length(); i++) {
             outBuffer[i] = (byte) outMessage[i];
         }
