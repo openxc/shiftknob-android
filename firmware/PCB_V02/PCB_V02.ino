@@ -18,7 +18,7 @@
 |
 |  {"name": "shift", "value": true}  value is a boolean
 |  {"name": "color", "value": 100}   value is an integer 0 to 255
-|  {"name": "gear", "value": 1}      value is 0 to 9
+|  {"name": "digit", "value": 1}      value is 0 to 9
 |
 | A 74hc595 shift register and is used to control the
 | 7-sement display. RGB LEDs are controlled with 3 PWM 
@@ -167,7 +167,7 @@ void loop() {
  Three cases so far:
  {"name": "shift", "value": 1}     value is an integer. either 1 or 0.
  {"name": "color", "value": 100}   value is an integer 0 to 255
- {"name": "gear", "value": 5}      value is 0 to 9
+ {"name": "digit", "value": 5}      value is 0 to 9
 */
 void processMessage(aJsonObject *msg) {
   aJsonObject *name = aJson.getObjectItem(msg, "name");
@@ -181,7 +181,7 @@ void processMessage(aJsonObject *msg) {
   String sName = name->valuestring;
   int iValue = value->valueint;
   
-  if (sName == "gear") {
+  if (sName == "digit") {
     sendDigit(allDigits[iValue]);
     return;
   }

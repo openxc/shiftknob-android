@@ -11,7 +11,7 @@ public class ArduinoHardware {
     
     private static final String SHIFT_NAME = "shift"; 
     private static final String COLOR_NAME = "color";
-    private static final String DIGIT_NAME = "gear";
+    private static final String DIGIT_NAME = "digit";
     
     private static final int UPSHIFT_VALUE = 1;
     private static final int NO_SHIFT_VALUE = 0;
