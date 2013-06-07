@@ -503,14 +503,9 @@ public class MainActivity extends Activity {
     public void sendToArduino(String signal, int value) {
         
         String outString = JsonBuilder.builder(signal, value);
-        
-        char[] outMessage = outString.toCharArray();
-        byte outBuffer[] = new byte[outMessage.length];
-        for (int i = 0; i < outString.length(); i++) {
-            outBuffer[i] = (byte) outMessage[i];
-        }
+
         try {
-            mSerialPort.write(outBuffer, outString.length());
+            mSerialPort.write(outString);
         } catch (Exception e) {
             Log.d(TAG,
                     "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
