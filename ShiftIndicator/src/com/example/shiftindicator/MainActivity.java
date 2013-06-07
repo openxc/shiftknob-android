@@ -362,7 +362,9 @@ public class MainActivity extends Activity {
     }
     
     /**
-     * vehicleStateCalculation is the main function of this class. In the 
+     * VEHICLE STATE CALCULATION:
+     * 
+     * This is the main function of this class. In the 
      * event that a vehicle is not equipped with a built-in "ShiftRecommendation" 
      * and "TransmissionGearPosition" signals on CAN, this function will 
      * calculate the gear position and shift point locally. These variables are
@@ -371,34 +373,30 @@ public class MainActivity extends Activity {
     public void vehicleStateCalculation() {
 
         /**
-         * GEAR POSITION CALCULATION: First calculate gear based on ratio of rpm
-         * to speed. The for loop compares known gear ratios with the calculated
-         * ratio.
+         * First, setup the variables that will be needed for the calculations. 
+         * Also cancel the visual shift message if the allotted time has 
+         * passed (cancelShiftTime function).
          */
         if (mVehicleSpeed == 0) {
             mVehicleSpeed = 1;
         }
-        
         double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
         cancelShiftTime(currentTime);
         
-        calcGearPosition(ratio); 
-
-        if (!mPowerStatus) {
-            return;
-        }
+        calculateGearPosition(ratio);
 
         /**
          * SHIFT CALCULATION: The upshift signal is based on throttle position
          * and the rpm of the engine in the NEXT gear. The higher the throttle
          * position, the higher the rpm in the next gear (quick acceleration).
          * 
-         * First, if the pedal position is less than 10, then the driver is
+         * First, if the powerStatus switch is off, then don't do the calculation.
+         * Secondly, if the pedal position is less than 10, then the driver is
          * probably shifting or slowing down, so no shift signal is needed.
          */
 
-        if (mPedalPos < 10) {
+        if (!mPowerStatus || mPedalPos < 10) {
             return;
         }
 
@@ -406,18 +404,25 @@ public class MainActivity extends Activity {
          * If the pedal position is above the minimum threshold, then the driver
          * is thought to be holding a constant speed or accelerating and thus
          * the shift signal point should be calculated.
-         * 
-         * Values A, B, and C of the algorithm below must be optimized for each
-         * specific vehicle. These values can be changed in the Vehicle-Specific
-         * Section above.
-         * 
-         * TEMPLATE:
-         *   next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C 
-         * 
-         * If the calculated next_rpm is less than rpm the vehicle would be if
-         * shifted to the next gear, the shift signal is sent to the shift knob.
          */
-
+        shouldDriverShift();
+    }
+    
+    /**
+     * SHOULD DRIVER SHIFT:
+     * 
+     * Values A, B, and C of the algorithm below must be optimized for each
+     * specific vehicle. These values can be changed in the Vehicle-Specific
+     * Section above.
+     * 
+     * TEMPLATE:
+     *   next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C 
+     * 
+     * If the calculated next_rpm is less than rpm the vehicle would be in  if
+     * shifted to the next gear, then the shift signal is sent to the shift knob.
+     */
+    
+    public void shouldDriverShift() {
         double nextRPM;
         if (mPedalPos >= mBasePedalPosition) {
             nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
@@ -429,8 +434,18 @@ public class MainActivity extends Activity {
             shift();
         }
     }
-
-    public void calcGearPosition(double r) {
+    
+    /** 
+     * CALCULATE GEAR POSITION:
+     * 
+     * This function iterates through the known gear ratios for a given vehicle
+     * and compares those values to the current ratio which is computed by 
+     * dividing mEngineSpeed by mVehicleSpeed. Once the computed ratio is
+     * within 10% of a known ratio, the transmission is thought to be in a 
+     * specific gear. IF there is no ratio match then the vehicle must be in
+     * neutral or the clutch is depressed.
+     */
+    public void calculateGearPosition(double r) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
                 if (mNextRatio != mGearRatios[i])
