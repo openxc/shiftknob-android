@@ -113,7 +113,7 @@ public class MainActivity extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress,
                     boolean fromUser) {
-                send2Arduino("color", progress * 255 / 100);
+                sendToArduino("color", progress * 255 / 100);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -454,7 +454,7 @@ public class MainActivity extends Activity {
         });
 
         if (g != mCurrentGear) {
-            send2Arduino("gear", g);
+            sendToArduino("gear", g);
         }
         mCurrentGear = g;
     }
@@ -467,7 +467,7 @@ public class MainActivity extends Activity {
      */
     private void shift() {
         if (mSharedPrefs.getBoolean("pref_haptic_feedback", false)) {
-            send2Arduino("shift", 1);
+            sendToArduino("shift", 1);
         }
 
         if (mSharedPrefs.getBoolean("pref_audio_feedback", false)) {
@@ -500,7 +500,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void send2Arduino(String signal, int value) {
+    public void sendToArduino(String signal, int value) {
         
         String outString = JsonBuilder.builder(signal, value);
         
@@ -546,7 +546,7 @@ public class MainActivity extends Activity {
             Log.d(TAG, "mSerialPort.begin() failed.");
         } else {
             Log.d(TAG, "mSerialPort.begin() success!.");
-            send2Arduino("gear", 0);
+            sendToArduino("gear", 0);
         }
     }
 
