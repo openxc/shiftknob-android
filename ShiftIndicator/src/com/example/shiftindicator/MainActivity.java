@@ -179,6 +179,7 @@ public class MainActivity extends Activity {
             } catch (UnrecognizedMeasurementTypeException e) {
                 Log.w(TAG, "Couldn't add listeners for measurements", e);
             }
+            mIsBound = true;
         }
 
         // Called when the connection with the service disconnects unexpectedly
