@@ -214,7 +214,7 @@ public class MainActivity extends Activity {
             });
 
             if (!mSharedPrefs.getBoolean("pref_calculation_mode", false)) {
-                shiftCalculation();
+                vehicleStateCalculation();
             }
         }
     };
@@ -353,12 +353,13 @@ public class MainActivity extends Activity {
     }
     
     /**
-     * shiftCalculation is the main function of this class. In the event that a
-     * vehicle is not equipped with a built-in "ShiftRecommendation" signal on
-     * CAN, this function will calculate the upshift point locally. The gear
-     * position and shift point are then sent to the shift knob.
+     * vehicleStateCalculation is the main function of this class. In the 
+     * event that a vehicle is not equipped with a built-in "ShiftRecommendation" 
+     * and "TransmissionGearPosition" signals on CAN, this function will 
+     * calculate the gear position and shift point locally. These variables are
+     * then sent to the shift knob.
      */
-    public void shiftCalculation() {
+    public void vehicleStateCalculation() {
 
         /**
          * GEAR POSITION CALCULATION: First calculate gear based on ratio of rpm
