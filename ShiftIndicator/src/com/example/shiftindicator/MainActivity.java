@@ -83,9 +83,9 @@ public class MainActivity extends Activity {
     private int[] mGearRatios;
     private double mBasePedalPosition;
     private int mMinRPM;
-    private double aVariable = 0.0;
-    private double bVariable = 0.0;
-    private double cVariable = 0.0;
+    private double mScaler = 0.0;
+    private double mCurvature = 0.0;
+    private double mRpmOffset = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,9 +305,9 @@ public class MainActivity extends Activity {
                     };
                     mBasePedalPosition = 15.0;
                     mMinRPM = 1300;
-                    aVariable = 1.2;
-                    bVariable = -30;
-                    cVariable = 1300;
+                    mScaler = 1.2;
+                    mCurvature = -30;
+                    mRpmOffset = 1300;
                 }
                 
                 if (selectedVehicle.equals("Focus ST")) { 
@@ -322,9 +322,9 @@ public class MainActivity extends Activity {
                     };
                     mBasePedalPosition = 15.0;
                     mMinRPM = 1300;
-                    aVariable = 1.2;
-                    bVariable = -30;
-                    cVariable = 1300;
+                    mScaler = 1.2;
+                    mCurvature = -30;
+                    mRpmOffset = 1300;
                 }
                 
                 if (selectedVehicle.equals("Mustang GT")) {
@@ -339,9 +339,9 @@ public class MainActivity extends Activity {
                     };
                     mBasePedalPosition = 10.0;
                     mMinRPM = 1600;
-                    aVariable = 1.3;
-                    bVariable = -20;
-                    cVariable = 1680;
+                    mScaler = 1.3;
+                    mCurvature = -20;
+                    mRpmOffset = 1680;
                 }
             }
 
@@ -424,7 +424,7 @@ public class MainActivity extends Activity {
 
         double nextRPM;
         if (mPedalPos >= mBasePedalPosition) {
-            nextRPM = aVariable * mPedalPos * mPedalPos + bVariable * mPedalPos + cVariable;
+            nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
         } else
             nextRPM = mMinRPM;
 
