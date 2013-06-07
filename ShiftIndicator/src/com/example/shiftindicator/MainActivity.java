@@ -80,12 +80,20 @@ public class MainActivity extends Activity {
     boolean mJustShifted;
     int mNextRatio = 1;
 
-    private int[] mGearRatios;
-    private double mBasePedalPosition;
-    private int mMinRPM;
-    private double mScaler = 0.0;
-    private double mCurvature = 0.0;
-    private double mRpmOffset = 0.0;
+    // Use the Figo by Default
+    private int[] mGearRatios = new int[]{
+            0, // Neutral
+            140, // 1st
+            75, // 2nd
+            50, // 3rd
+            37, // 4th
+            30, // 5th
+    };
+    private double mBasePedalPosition = 15.0;
+    private int mMinRPM = 1300;
+    private double mScaler = 1.2;
+    private double mCurvature = -30;
+    private double mRpmOffset = 1300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
