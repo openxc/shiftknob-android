@@ -57,8 +57,8 @@ public class MainActivity extends Activity {
 
     // USB setup:
     public static final String ACTION_USB_PERMISSION = "com.ford.openxc.USB_PERMISSION";
-    static boolean mSerialStarted = false;
-    static FTDriver mSerialPort = null;
+    
+    static ArduinoHardware mArduinoHardware = null;
 
     UsbManager mUsbManager = null;
 
@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress,
                     boolean fromUser) {
-                sendToArduino("color", progress * 255 / 100);
+                mArduinoHardware.sendColor(progress * 255 / 100);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -475,7 +475,7 @@ public class MainActivity extends Activity {
         });
 
         if (g != mCurrentGear) {
-            sendToArduino("gear", g);
+            mArduinoHardware.sendDigit(g);
         }
         mCurrentGear = g;
     }
@@ -488,7 +488,7 @@ public class MainActivity extends Activity {
      */
     private void shift() {
         if (mSharedPrefs.getBoolean("pref_haptic_feedback", false)) {
-            sendToArduino("shift", 1);
+            mArduinoHardware.turnOnShiftIndication();
         }
 
         if (mSharedPrefs.getBoolean("pref_audio_feedback", false)) {
@@ -531,18 +531,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void sendToArduino(String signal, int value) {
-        
-        String outString = JsonBuilder.builder(signal, value);
-
-        try {
-            mSerialPort.write(outString);
-        } catch (Exception e) {
-            Log.d(TAG,
-                    "mSerialPort.write() just threw an exception.  Is the cable plugged in?");
-        }
-    }
-
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -551,41 +539,24 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "Device detached");
                 Bundle extras = intent.getExtras();
                 UsbDevice lostDevice = (UsbDevice) extras.get("device");
-                if (lostDevice.equals(mSerialPort.getDevice())) {
-                    mSerialPort.end();
+                if (lostDevice.equals(mArduinoHardware.getDevice())) {
+                    mArduinoHardware.end();
                 }
             }
         }
     };
 
-    private void connectToDevice() {
-        if (mSerialPort == null) {
-            mSerialPort = new FTDriver(mUsbManager);
-        }
-
-        if (mSerialPort.isConnected()) {
-            return;
-        }
-
-        mSerialPort.begin(FTDriver.BAUD115200);
-        if (!mSerialPort.isConnected()) {
-            Log.d(TAG, "mSerialPort.begin() failed.");
-        } else {
-            Log.d(TAG, "mSerialPort.begin() success!.");
-            sendToArduino("gear", 0);
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        connectToDevice();
+        mArduinoHardware = new ArduinoHardware(mUsbManager);
+        mArduinoHardware.connect();
     }
 
     public void onExit(View view) {
 
-        if (mSerialPort != null) {
-            mSerialPort.end();
+        if (mArduinoHardware != null) {
+            mArduinoHardware.end();
         }
         if (mIsBound) {
             Log.i(TAG, "Unbinding from vehicle service before exit");
