@@ -277,7 +277,7 @@ public class MainActivity extends Activity {
                 }
 
                 else {
-                    cancelShift(mShiftTime + 600);
+                    cancelShiftBoolean(true);
                 }
             }
         }
@@ -372,6 +372,7 @@ public class MainActivity extends Activity {
         
         double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
+        cancelShiftTime(currentTime);
         
         calcGearPosition(ratio); 
 
@@ -389,7 +390,6 @@ public class MainActivity extends Activity {
          */
 
         if (mPedalPos < 10) {
-            cancelShift(currentTime);
             return;
         }
 
@@ -416,14 +416,8 @@ public class MainActivity extends Activity {
             nextRPM = mMinRPM;
         }
 
-        if (nextRPM < mVehicleSpeed * mNextRatio) {
-
-            if (!mJustShifted) {
-                shift();
-            }
-            cancelShift(currentTime);
-        } else {
-            cancelShift(currentTime);
+        if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted) {
+            shift();
         }
     }
 
@@ -442,7 +436,6 @@ public class MainActivity extends Activity {
                 // in Neutral
                 mJustShifted = false;
                 updateGear(0);
-                //cancelShift(currentTime);
                 return;
             }
         }
@@ -491,17 +484,27 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * cancelShift removes the "upshift message" from the UI screen after a
-     * given amount of time.
+     * cancelShift* removes the "upshift message" from the UI screen after 
+     * 500 milliseconds.
      */
-    private void cancelShift(long t) {
+    private void cancelShiftTime(long t) {
         if (t - mShiftTime > 500) {
-            MainActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    mLayout.setBackgroundColor(Color.BLACK);
-                }
-            });
+            cancelShift();
         }
+    }
+    
+    public void cancelShiftBoolean(boolean b) {
+        if (b) {
+            cancelShift();
+        }
+    }
+    
+    public void cancelShift() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                mLayout.setBackgroundColor(Color.BLACK);
+            }
+        });
     }
 
     public void sendToArduino(String signal, int value) {
