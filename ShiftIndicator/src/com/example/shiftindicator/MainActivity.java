@@ -372,25 +372,8 @@ public class MainActivity extends Activity {
         
         double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
-
-        for (int i = 1; i < mGearRatios.length; i++) {
-            if (mGearRatios[i] * .9 < ratio && mGearRatios[i] * 1.1 > ratio) {
-                if (mNextRatio != mGearRatios[i])
-                    mJustShifted = false;
-                mNextRatio = mGearRatios[i];
-                updateGear(i);
-                break;
-            }
-
-            if (i == mGearRatios.length - 1) {
-                // if the loop gets to here, then the vehicle is thought to be
-                // in Neutral
-                mJustShifted = false;
-                updateGear(0);
-                cancelShift(currentTime);
-                return;
-            }
-        }
+        
+        calcGearPosition(ratio); 
 
         if (!mPowerStatus) {
             return;
@@ -444,7 +427,27 @@ public class MainActivity extends Activity {
         }
     }
 
-/** updateGear takes the calculated gear position and sends that value
+    public void calcGearPosition(double r) {
+        for (int i = 1; i < mGearRatios.length; i++) {
+            if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
+                if (mNextRatio != mGearRatios[i])
+                    mJustShifted = false;
+                mNextRatio = mGearRatios[i];
+                updateGear(i);
+                break;
+            }
+
+            if (i == mGearRatios.length - 1) {
+                // if the loop gets to here, then the vehicle is thought to be
+                // in Neutral
+                mJustShifted = false;
+                updateGear(0);
+                //cancelShift(currentTime);
+                return;
+            }
+        }
+    }
+    /** updateGear takes the calculated gear position and sends that value
 	 * to the shift knob.
 	 */
     private void updateGear(final int g) {
