@@ -52,8 +52,8 @@ public class MainActivity extends Activity {
     private VehicleManager mVehicleManager;
     private boolean mIsBound;
 
-    private SharedPreferences sharedPrefs;
-    private MediaPlayer mediaPlayer;
+    private SharedPreferences mSharedPrefs;
+    private MediaPlayer mMediaPlayer;
 
     // USB setup:
     public static final String ACTION_USB_PERMISSION = "com.ford.openxc.USB_PERMISSION";
@@ -68,21 +68,21 @@ public class MainActivity extends Activity {
     private TextView mGearPosition;
     private Spinner mVehicleSpinner;
     private Switch mPowerSwitch;
-    private boolean powerStatus = true;
+    private boolean mPowerStatus = true;
     private SeekBar mLEDbar;
     private View mLayout;
-    private int engineSpeed;
-    private double vehicleSpeed;
-    private double pedalPos;
-    private long shiftTime;
+    private int mEngineSpeed;
+    private double mVehicleSpeed;
+    private double mPedalPos;
+    private long mShiftTime;
 
-    private int currentGear;
-    boolean justShifted;
-    int nextRatio = 1;
+    private int mCurrentGear;
+    boolean mJustShifted;
+    int mNextRatio = 1;
 
-    private int[] gearRatios;
-    private double basePedalPosition;
-    private int minRPM;
+    private int[] mGearRatios;
+    private double mBasePedalPosition;
+    private int mMinRPM;
     private double aVariable = 0.0;
     private double bVariable = 0.0;
     private double cVariable = 0.0;
@@ -93,9 +93,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Log.i(TAG, "Shift Indicator created");
 
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.chime);
+        mMediaPlayer = MediaPlayer.create(this, R.raw.chime);
 
         Intent intent = new Intent(this, VehicleManager.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
         mPowerSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
-                powerStatus = isChecked;
+                mPowerStatus = isChecked;
             }
         });
 
@@ -192,12 +192,12 @@ public class MainActivity extends Activity {
     VehicleSpeed.Listener mSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             final VehicleSpeed updated_value = (VehicleSpeed) measurement;
-            vehicleSpeed = updated_value.getValue().doubleValue();
+            mVehicleSpeed = updated_value.getValue().doubleValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     // send vehicle speed with 1 decimal point
                     mVehicleSpeedView.setText(""
-                            + Math.round(vehicleSpeed * 10) / 10);
+                            + Math.round(mVehicleSpeed * 10) / 10);
                 }
             });
         }
@@ -206,14 +206,14 @@ public class MainActivity extends Activity {
     EngineSpeed.Listener mEngineListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             final EngineSpeed updated_value = (EngineSpeed) measurement;
-            engineSpeed = updated_value.getValue().intValue();
+            mEngineSpeed = updated_value.getValue().intValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    mEngineSpeedView.setText("" + engineSpeed);
+                    mEngineSpeedView.setText("" + mEngineSpeed);
                 }
             });
 
-            if (!sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+            if (!mSharedPrefs.getBoolean("pref_calculation_mode", false)) {
                 shiftCalculation();
             }
         }
@@ -222,10 +222,10 @@ public class MainActivity extends Activity {
     AcceleratorPedalPosition.Listener mPedalListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             final AcceleratorPedalPosition updated_value = (AcceleratorPedalPosition) measurement;
-            pedalPos = updated_value.getValue().doubleValue();
+            mPedalPos = updated_value.getValue().doubleValue();
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    mPedalView.setText("" + (int) pedalPos);
+                    mPedalView.setText("" + (int) mPedalPos);
                 }
             });
         }
@@ -235,7 +235,7 @@ public class MainActivity extends Activity {
         public void receive(Measurement measurement) {
             final TransmissionGearPosition status = (TransmissionGearPosition) measurement;
 
-            if (sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+            if (mSharedPrefs.getBoolean("pref_calculation_mode", false)) {
                 switch (status.getValue().enumValue()) {
                 case FIRST:
                     updateGear(1);
@@ -270,14 +270,14 @@ public class MainActivity extends Activity {
         public void receive(Measurement measurement) {
             final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
 
-            if (sharedPrefs.getBoolean("pref_calculation_mode", false)) {
+            if (mSharedPrefs.getBoolean("pref_calculation_mode", false)) {
                 if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT
-                        && powerStatus) {
+                        && mPowerStatus) {
                     shift();
                 }
 
                 else {
-                    cancelShift(shiftTime + 600);
+                    cancelShift(mShiftTime + 600);
                 }
             }
         }
@@ -295,7 +295,7 @@ public class MainActivity extends Activity {
                         "Selected Vehicle: "+selectedVehicle, Toast.LENGTH_SHORT).show();
                 // Load Vehicle-Specific Data: //
                 if (selectedVehicle.equals("Figo")) {
-                    gearRatios = new int[]{
+                    mGearRatios = new int[]{
                           0, // Neutral
                           140, // 1st
                           75, // 2nd
@@ -303,15 +303,15 @@ public class MainActivity extends Activity {
                           37, // 4th
                           30, // 5th
                     };
-                    basePedalPosition = 15.0;
-                    minRPM = 1300;
+                    mBasePedalPosition = 15.0;
+                    mMinRPM = 1300;
                     aVariable = 1.2;
                     bVariable = -30;
                     cVariable = 1300;
                 }
                 
                 if (selectedVehicle.equals("Focus ST")) { 
-                    gearRatios = new int[]{ 
+                    mGearRatios = new int[]{ 
                           0, // Neutral
                           114, // 1st
                           69, // 2nd
@@ -320,15 +320,15 @@ public class MainActivity extends Activity {
                           28, // 5th
                           23 // 6th
                     };
-                    basePedalPosition = 15.0;
-                    minRPM = 1300;
+                    mBasePedalPosition = 15.0;
+                    mMinRPM = 1300;
                     aVariable = 1.2;
                     bVariable = -30;
                     cVariable = 1300;
                 }
                 
                 if (selectedVehicle.equals("Mustang GT")) {
-                    gearRatios = new int[] {
+                    mGearRatios = new int[] {
                           0, // Neutral
                           100, // 1st
                           66, // 2nd
@@ -337,8 +337,8 @@ public class MainActivity extends Activity {
                           27, // 5th
                           18 // 6th
                     };
-                    basePedalPosition = 10.0;
-                    minRPM = 1600;
+                    mBasePedalPosition = 10.0;
+                    mMinRPM = 1600;
                     aVariable = 1.3;
                     bVariable = -20;
                     cVariable = 1680;
@@ -365,31 +365,31 @@ public class MainActivity extends Activity {
          * to speed. The for loop compares known gear ratios with the calculated
          * ratio.
          */
-        if (vehicleSpeed == 0)
-            vehicleSpeed = 1;
-        double ratio = engineSpeed / vehicleSpeed;
+        if (mVehicleSpeed == 0)
+            mVehicleSpeed = 1;
+        double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
 
-        for (int i = 1; i < gearRatios.length; i++) {
-            if (gearRatios[i] * .9 < ratio && gearRatios[i] * 1.1 > ratio) {
-                if (nextRatio != gearRatios[i])
-                    justShifted = false;
-                nextRatio = gearRatios[i];
+        for (int i = 1; i < mGearRatios.length; i++) {
+            if (mGearRatios[i] * .9 < ratio && mGearRatios[i] * 1.1 > ratio) {
+                if (mNextRatio != mGearRatios[i])
+                    mJustShifted = false;
+                mNextRatio = mGearRatios[i];
                 updateGear(i);
                 break;
             }
 
-            if (i == gearRatios.length - 1) {
+            if (i == mGearRatios.length - 1) {
                 // if the loop gets to here, then the vehicle is thought to be
                 // in Neutral
-                justShifted = false;
+                mJustShifted = false;
                 updateGear(0);
                 cancelShift(currentTime);
                 return;
             }
         }
 
-        if (!powerStatus)
+        if (!mPowerStatus)
             return;
 
         /**
@@ -401,7 +401,7 @@ public class MainActivity extends Activity {
          * probably shifting or slowing down, so no shift signal is needed.
          */
 
-        if (pedalPos < 10) {
+        if (mPedalPos < 10) {
             cancelShift(currentTime);
             return;
         }
@@ -423,14 +423,14 @@ public class MainActivity extends Activity {
          */
 
         double nextRPM;
-        if (pedalPos >= basePedalPosition) {
-            nextRPM = aVariable * pedalPos * pedalPos + bVariable * pedalPos + cVariable;
+        if (mPedalPos >= mBasePedalPosition) {
+            nextRPM = aVariable * mPedalPos * mPedalPos + bVariable * mPedalPos + cVariable;
         } else
-            nextRPM = minRPM;
+            nextRPM = mMinRPM;
 
-        if (nextRPM < vehicleSpeed * nextRatio) {
+        if (nextRPM < mVehicleSpeed * mNextRatio) {
 
-            if (!justShifted) {
+            if (!mJustShifted) {
                 shift();
             }
             cancelShift(currentTime);
@@ -448,10 +448,10 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (g != currentGear) {
+        if (g != mCurrentGear) {
             send2Arduino("gear", g);
         }
-        currentGear = g;
+        mCurrentGear = g;
     }
 
     /**
@@ -461,15 +461,15 @@ public class MainActivity extends Activity {
      * places.
      */
     private void shift() {
-        if (sharedPrefs.getBoolean("pref_haptic_feedback", false)) {
+        if (mSharedPrefs.getBoolean("pref_haptic_feedback", false)) {
             send2Arduino("shift", 1);
         }
 
-        if (sharedPrefs.getBoolean("pref_audio_feedback", false)) {
-            mediaPlayer.start();
+        if (mSharedPrefs.getBoolean("pref_audio_feedback", false)) {
+            mMediaPlayer.start();
         }
 
-        if (sharedPrefs.getBoolean("pref_visual_feedback", false)) {
+        if (mSharedPrefs.getBoolean("pref_visual_feedback", false)) {
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     mLayout.setBackgroundColor(Color.WHITE);
@@ -477,8 +477,8 @@ public class MainActivity extends Activity {
             });
         }
 
-        justShifted = true;
-        shiftTime = new Date().getTime();
+        mJustShifted = true;
+        mShiftTime = new Date().getTime();
     }
 
     /**
@@ -486,7 +486,7 @@ public class MainActivity extends Activity {
      * given amount of time.
      */
     private void cancelShift(long t) {
-        if (t - shiftTime > 500) {
+        if (t - mShiftTime > 500) {
             MainActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     mLayout.setBackgroundColor(Color.BLACK);
