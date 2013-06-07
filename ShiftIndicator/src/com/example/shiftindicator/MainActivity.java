@@ -365,8 +365,10 @@ public class MainActivity extends Activity {
          * to speed. The for loop compares known gear ratios with the calculated
          * ratio.
          */
-        if (mVehicleSpeed == 0)
+        if (mVehicleSpeed == 0) {
             mVehicleSpeed = 1;
+        }
+        
         double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
 
@@ -389,8 +391,9 @@ public class MainActivity extends Activity {
             }
         }
 
-        if (!mPowerStatus)
+        if (!mPowerStatus) {
             return;
+        }
 
         /**
          * SHIFT CALCULATION: The upshift signal is based on throttle position
@@ -425,8 +428,9 @@ public class MainActivity extends Activity {
         double nextRPM;
         if (mPedalPos >= mBasePedalPosition) {
             nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
-        } else
+        } else {
             nextRPM = mMinRPM;
+        }
 
         if (nextRPM < mVehicleSpeed * mNextRatio) {
 
@@ -434,8 +438,9 @@ public class MainActivity extends Activity {
                 shift();
             }
             cancelShift(currentTime);
-        } else
+        } else {
             cancelShift(currentTime);
+        }
     }
 
 /** updateGear takes the calculated gear position and sends that value
