@@ -20,6 +20,12 @@ public class ArduinoHardware {
     private int baudRate = FTDriver.BAUD115200;
     private UsbManager mUsbManager = null;
     
+    /**
+     * This class handles all communication and device setup for the 
+     * connection between Shift Indicator app and the Shift Knob 
+     * hardware. It can serve as a template for future Arduino and/or
+     * serial devices attached to an Android device.
+     */
     public ArduinoHardware(UsbManager u) {
         mUsbManager = u;
     }
