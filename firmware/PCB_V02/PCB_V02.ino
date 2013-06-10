@@ -89,14 +89,12 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
   pinMode(motorPin, OUTPUT);
-  
   pinMode(redLED, OUTPUT);
   pinMode(blueLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
   pinMode(digitLED, OUTPUT);
   
   digitalWrite(digitLED, LOW);
-  
   analogWrite(blueLED, 100);
   analogWrite(redLED, 100);
   analogWrite(greenLED, 100);
@@ -105,7 +103,12 @@ void setup() {
 }
 
 void loop() {
-  
+  controlMotor();
+  getData();
+  isUsbConnected();
+}
+
+void controlMotor() {
   // Is the motor on? If so, has it been on for more time than motorOn?
   // Is the motorCommand still ON or has it been turned off by other logic?
   // If all true, then turn off the motor and record the time.
@@ -141,7 +144,9 @@ void loop() {
     digitalWrite(motorPin, motorState);
     motorPulse = motorCount;
   }
-  
+}
+
+void getData() {
   if (serialStream.available()) {
     serialStream.skip();
   }
@@ -152,17 +157,7 @@ void loop() {
     processMessage(msg);
     aJson.deleteItem(msg);
   }
-  
-  // Until USB has been connected, display a spinning wheel on
-  // the 7 segment display.
-  if (!usbConnected) {
-    for (int c = 0; c < 6; c++) {
-      sendDigit(circle[c]);
-      delay(50);
-    }
-  }
 }
-
 /*
  Three cases so far:
  {"name": "shift", "value": 1}     value is an integer. either 1 or 0.
@@ -227,4 +222,15 @@ void sendDigit(int i){
   shiftOut(dataPin, clockPin, LSBFIRST, i);  
   //take the latch pin high so the LEDs will light up:
   digitalWrite(latchPin, HIGH);
+}
+
+void isUsbConnected() {
+  // Until USB has been connected, display a spinning wheel on
+  // the 7 segment display.
+  if (!usbConnected) {
+    for (int c = 0; c < 6; c++) {
+      sendDigit(circle[c]);
+      delay(50);
+    }
+  }
 }
