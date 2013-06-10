@@ -449,8 +449,9 @@ public class MainActivity extends Activity {
     public void calculateGearPosition(double r) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
-                if (mNextRatio != mGearRatios[i])
+                if (mNextRatio != mGearRatios[i]) {
                     mJustShifted = false;
+                }
                 mNextRatio = mGearRatios[i];
                 updateGear(i);
                 break;
