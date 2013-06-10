@@ -416,10 +416,11 @@ public class MainActivity extends Activity {
      * Section above.
      * 
      * TEMPLATE:
-     *   next_rpm = A*(pedal_pos)*(pedal_pos)-B*(pedal_pos)+C 
+     *   nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C 
      * 
-     * If the calculated next_rpm is less than rpm the vehicle would be in  if
-     * shifted to the next gear, then the shift signal is sent to the shift knob.
+     * If the calculated nextRPM is less than RPM the vehicle would be in if
+     * the transmission were shifted to the next gear, then the shift signal 
+     * is sent to the shift knob.
      */
     
     public void shouldDriverShift() {
