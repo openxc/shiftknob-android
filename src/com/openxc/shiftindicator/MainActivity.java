@@ -73,8 +73,9 @@ public class MainActivity extends Activity {
     private int mEngineSpeed;
     private double mVehicleSpeed;
     private double mPedalPos;
-    private long mShiftTime;
-
+    private long mShiftCommandTime;
+    private long mNewGearTime;
+    
     private int mCurrentGear;
     boolean mJustShifted;
     int mNextRatio = 1;
@@ -383,7 +384,7 @@ public class MainActivity extends Activity {
         long currentTime = new Date().getTime();
         cancelShiftTime(currentTime);
         
-        calculateGearPosition(ratio);
+        calculateGearPosition(ratio, currentTime);
 
         /**
          * SHIFT CALCULATION: The upshift signal is based on throttle position
@@ -404,7 +405,7 @@ public class MainActivity extends Activity {
          * is thought to be holding a constant speed or accelerating and thus
          * the shift signal point should be calculated.
          */
-        shouldDriverShift();
+        shouldDriverShift(currentTime);
     }
     
     /**
@@ -420,9 +421,14 @@ public class MainActivity extends Activity {
      * If the calculated nextRPM is less than RPM the vehicle would be in if
      * the transmission were shifted to the next gear, then the shift signal 
      * is sent to the shift knob.
+     * 
+     * Additional criteria:
+     *  1. Do not send another "shift signal" if a signal was just sent (mJustShifted)
+     *  2. Wait until after the driver has been in a gear for 1 second before sending
+     *  another shift signal.
      */
     
-    public void shouldDriverShift() {
+    public void shouldDriverShift(long t) {
         double nextRPM;
         if (mPedalPos >= mBasePedalPosition) {
             nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
@@ -430,7 +436,7 @@ public class MainActivity extends Activity {
             nextRPM = mMinRPM;
         }
 
-        if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted) {
+        if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted && (t-mNewGearTime > 1000)) {
             shift();
         }
     }
@@ -445,11 +451,12 @@ public class MainActivity extends Activity {
      * specific gear. IF there is no ratio match then the vehicle must be in
      * neutral or the clutch is depressed.
      */
-    public void calculateGearPosition(double r) {
+    public void calculateGearPosition(double r, long t) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
                 if (mNextRatio != mGearRatios[i]) {
                     mJustShifted = false;
+                    mNewGearTime = t;
                 }
                 mNextRatio = mGearRatios[i];
                 updateGear(i);
@@ -505,7 +512,7 @@ public class MainActivity extends Activity {
         }
 
         mJustShifted = true;
-        mShiftTime = new Date().getTime();
+        mShiftCommandTime = new Date().getTime();
     }
 
     /**
@@ -513,7 +520,7 @@ public class MainActivity extends Activity {
      * 500 milliseconds.
      */
     private void cancelShiftTime(long t) {
-        if (t - mShiftTime > 500) {
+        if (t - mShiftCommandTime > 500) {
             cancelShift();
         }
     }
