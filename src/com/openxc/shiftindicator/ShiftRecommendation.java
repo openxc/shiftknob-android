@@ -1,4 +1,4 @@
-package com.example.shiftindicator;
+package com.openxc.shiftindicator;
 
 import java.util.Locale;
 

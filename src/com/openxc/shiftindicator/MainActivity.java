@@ -1,10 +1,9 @@
-package com.example.shiftindicator;
+package com.openxc.shiftindicator;
 
 import java.util.Date;
 
 import jp.ksksue.driver.serial.FTDriver;
 
-import com.example.shiftindicator.ShiftRecommendation.ShiftSignal;
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;

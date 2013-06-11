@@ -1,4 +1,4 @@
-package com.example.shiftindicator;
+package com.openxc.shiftindicator;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

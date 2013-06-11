@@ -1,4 +1,4 @@
-package com.example.shiftindicator;
+package com.openxc.shiftindicator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
