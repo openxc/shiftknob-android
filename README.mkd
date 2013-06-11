@@ -46,7 +46,7 @@ The Shift Indicator app uses the third method described above and implements a q
 
 **TEMPLATE:** 
 
-    `nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C`
+    nextRPM = mScaler*mPedalPos*mPedalPos - mCurvature*mPedalPos + mRpmOffset
 
 Vehicle Specific Values:
 
@@ -68,36 +68,32 @@ To add another vehicle, create an additional vehicle name and data values in the
 
 All communication with the Shift Knob hardware is handled in the ArduinoHardware class. This class has individual functions such as `turnOnShiftIndication()` and `sendDigit(int i)` that create JSON objects (using the JsonBuilder class) and send them as string messages to the hardware. To add a new message, simply create a function and add the appropriate JSON field variables. 
 
-ArduinoHardware uses [FTDriver][] to initiate and handle the serial port protocol needed to communicate with the FTDI chips onboard the shift knob hardware. This class can be used as a template for creating and sending message to an FTDI-enabled device.
+ArduinoHardware uses the OpenXC fork of [FTDriver][] to initiate and handle the serial port protocol needed to communicate with the FTDI chips onboard the shift knob hardware. This class can be used as a template for creating and sending message to an FTDI-enabled device.
 
 # Supported JSON Messages
 
-	{"name": "shift", "value": 1}  
+`{"name": "shift", "value": 1}`
 	
-	* value is either 1 or 0. acting as a boolean.
+* value is either 1 or 0. acting as a boolean.
 	
-	{"name": "color", "value": 100}   
+`{"name": "color", "value": 100}`   
 	
-	* value is an integer 0 to 255
+* value is an integer 0 to 255
 	
-	{"name": "gear", "value": 1}      
-	
-	* value is 0 to 9
+`{"name": "gear", "value": 1}`      
+
+* value is 0 to 9
 	
 ## Dependencies
 
-**Open XC Libraries**
-
-The [Open XC Android API](https://github.com/openxc/openxc-android handles all vehicle data 
+**Open XC Libraries:** The [Open XC Android API](https://github.com/openxc/openxc-android handles all vehicle data 
 connections. The library includes [installation instructions](http://openxcplatform.com/android/api-guide.html),
 example code and additional documentation in the README file. This library is needed to access any vehicle data.
 
-**FT Driver**
+**FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download the OpenXC fork of this library and import it into the same Eclipse workspace as the Shift Indicator project. 
 
-The Shift Indicator app also requires the [FTDriver][]. Download the OpenXC fork of this library and import it into the same Eclipse workspace as the Shift Indicator project. 
-
-If there are still errors, go to the `Android` properties for the
-`ShiftIndicator` project and manually re-link the `openxc` and `FTDriver`
+If there are still errors, go to Android->Properties for the
+ShiftIndicator project and manually re-link the `openxc` and `FTDriver`
 libraries at the bottom of the window.
 
 ## Resources
@@ -124,7 +120,7 @@ appropriate signals to the Shift Knob embedded system.
 The Android and firmware source code is available under the BSD open source
 license.
 
-The hardware schematics and enclosure design are available under the TAPR Open
-Hardware License.
+The hardware schematics and enclosure design are available under the 
+[Creative Commons Atribution 3.0 Unported](http://creativecommons.org/licenses/by/3.0/deed.en_US) license.
 
 [FTDriver]: https://github.com/openxc/FTDriver
