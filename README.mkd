@@ -38,7 +38,7 @@ A second method would be to select the very lowest possible RPM with hopes to in
 
 A third method would be an extension of the second method. In this method, the lowest possible RPM or the `minRPM` scales upwards based on the accelerator pedal position (which we interpret as the "requested torque"). If the driver wants to accelerate more quickly, then the app needs to wait until later in the RPM range to tell the driver when to shift. The figure below shows how a linear and a quadratic function can be used to calculate the shift point based on acceleration pedal position and RPM of the engine should the driver shift to the next gear. 
 
-![Shift Timing](/resources/plot.jpg)
+![Shift Timing](/docs/plot.jpg)
 
 # Equation
 
