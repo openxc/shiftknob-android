@@ -384,7 +384,7 @@ public class MainActivity extends Activity {
         long currentTime = new Date().getTime();
         cancelShiftTime(currentTime);
         
-        calculateGearPosition(ratio, currentTime);
+        handleGearPosition(ratio, currentTime);
 
         /**
          * SHIFT CALCULATION: The upshift signal is based on throttle position
@@ -451,15 +451,25 @@ public class MainActivity extends Activity {
      * specific gear. IF there is no ratio match then the vehicle must be in
      * neutral or the clutch is depressed.
      */
-    public void calculateGearPosition(double r, long t) {
+    public void handleGearPosition(double r, long t) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
-                if (mNextRatio != mGearRatios[i]) {
+                mNextRatio = mGearRatios[i];
+                
+                // if the vehicle is in a new gear, then no longer need the mJustShifted command
+                if (i != mCurrentGear) {
                     mJustShifted = false;
                     mNewGearTime = t;
+                    mCurrentGear = i;
                 }
-                mNextRatio = mGearRatios[i];
-                updateGear(i);
+                
+                // if the vehicle has been in the same gear for more than 750 milliseconds
+                // then we can update the UI with the new gear position. This reduces noise in 
+                // the gear estimation process.
+                else if (t - mNewGearTime > 750) {
+                    updateGear(i);
+                }
+                
                 break;
             }
 
@@ -467,7 +477,15 @@ public class MainActivity extends Activity {
                 // if the loop gets to here, then the vehicle is thought to be
                 // in Neutral
                 mJustShifted = false;
-                updateGear(0);
+                if (i != mCurrentGear) {
+                    mNewGearTime = t;
+                    mCurrentGear = 0;
+                }
+
+                else if (t - mNewGearTime > 750){
+                    updateGear(0);
+                }
+                
                 return;
             }
         }
@@ -482,10 +500,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (g != mCurrentGear) {
-            mArduinoHardware.sendDigit(g);
-        }
-        mCurrentGear = g;
+        mArduinoHardware.sendDigit(g);
     }
 
     /**
