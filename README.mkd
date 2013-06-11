@@ -30,7 +30,7 @@ Some vehicles are equipped with a `shift_recommendation` CAN message. In this ca
 listen for this message and then send the appropriate signal. Most vehicles, however, do not have this message
 on CAN. For those vehicles, the app locally calculates the point at which the driver should shift. This point is cleverly called the `shift point`. 
 
-# When to Shift
+### When to Shift
 
 There are a few different methods by which a driver could choose his or her shift point. For drag racers, this might be at a set rpm near the engine rev limiter to have the quickest acceleration down the track. In this sceneario, the shift point would be something like 6,000 rpm. Whenever the engine RPMs reach 6,000 RPM, the app would send the appropriate signals to the driver telling him or her to shift to the next gear.
 
@@ -40,7 +40,7 @@ A third method would be an extension of the second method. In this method, the l
 
 ![Shift Timing](/docs/plot.JPG)
 
-# Equation
+### Equation
 
 The Shift Indicator app uses the third method described above and implements a quadratic function for calculating when the driver should shift. The equation is shown below. Values `mScaler`, `mCurvature`, and `mRpmOffset` of the algorithm below must be optimized for each specific vehicle. These values can be changed in the Vehicle-Specific Section of the code.
 
@@ -60,7 +60,7 @@ Vehicle Specific Values:
 1. Ford Focus ST
 1. Ford Figo
 
-# Adding Additional Vehicles
+### Adding Additional Vehicles
 
 To add another vehicle, create an additional vehicle name and data values in the `addVehicleSpinnerListener()` as well as the string array used by the settings class. The developer needs to calculate the total driveline gear ratio for each gear. This can be done by dividing `engine_speed` by `vehicle_speed` in each gear. The Focus ST variables can be used as a template for creating new shift calculation variables detailed above in the "Equation" section.  
 
@@ -70,7 +70,7 @@ All communication with the Shift Knob hardware is handled in the ArduinoHardware
 
 ArduinoHardware uses the OpenXC fork of [FTDriver][] to initiate and handle the serial port protocol needed to communicate with the FTDI chips onboard the shift knob hardware. This class can be used as a template for creating and sending message to an FTDI-enabled device.
 
-# Supported JSON Messages
+### Supported JSON Messages
 
 `{"name": "shift", "value": 1}`
 	
@@ -115,7 +115,7 @@ versions for differing applications.
 repository contains the Android application to run on the OpenXC host device. This app sends the
 appropriate signals to the Shift Knob embedded system.
 
-### License
+## License
 
 The Android and firmware source code is available under the BSD open source
 license.
