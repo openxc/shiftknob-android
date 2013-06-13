@@ -115,17 +115,8 @@ message to an FTDI-enabled device.
 
 ### Supported JSON Messages
 
-`{"name": "shift", "value": 1}`
-
-* value is either 1 or 0. acting as a boolean.
-
-`{"name": "color", "value": 100}`
-
-* value is an integer 0 to 255
-
-`{"name": "gear", "value": 1}`
-
-* value is 0 to 9
+See the [Arduino firmware](https://github.com/openxc/shiftknob-firmware)
+repostiroy for details on the JSON-formatted message protocol.
 
 ## Dependencies
 
