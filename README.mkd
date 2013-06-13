@@ -14,7 +14,7 @@ Knob](http://openxcplatform.com/projects/shift-knob.html) webpage.
 
 The Shift Indicator app is the Android side of the Shift Knob. The app reads in
 select vehicle data, calculates the point at which the driver should shift, and
-then sends the cooresponding haptic, visual, and auditory signals to the driver.
+then sends the corresponding haptic, visual, and auditory signals to the driver.
 The app also outputs a color value and digit value to be displayed on the Shift
 Knob 7 segment display and RGB LEDs.
 
@@ -38,7 +38,7 @@ shift. This point is cleverly called the `shift point`.
 
 There are a few different methods by which a driver could choose his or her
 shift point. For drag racers, this might be at a set rpm near the engine rev
-limiter to have the quickest acceleration down the track. In this sceneario, the
+limiter to have the quickest acceleration down the track. In this scenario, the
 shift point would be something like 6,000 rpm. Whenever the engine RPMs reach
 6,000 RPM, the app would send the appropriate signals to the driver telling him
 or her to shift to the next gear.
@@ -101,13 +101,14 @@ calculation variables detailed above in the "Equation" section.
 
 ## ArduinoHardware Class
 
-All communication with the Shift Knob hardware is handled in the ArduinoHardware
-class. This class has individual functions such as `turnOnShiftIndication()` and
-`sendDigit(int i)` that create JSON objects (using the JsonBuilder class) and
-send them as string messages to the hardware. To add a new message, simply
-create a function and add the appropriate JSON field variables.
+All communication with the Shift Knob hardware is handled in the
+`ArduinoHardware` class. This class has individual functions such as
+`turnOnShiftIndication()` and `sendDigit(int i)` that create JSON objects (using
+the `JsonBuilder` class) and send them as string messages to the hardware. To
+add a new message, simply create a function and add the appropriate JSON field
+variables.
 
-ArduinoHardware uses the OpenXC fork of [FTDriver][] to initiate and handle the
+`ArduinoHardware` uses the OpenXC fork of [FTDriver][] to initiate and handle the
 serial port protocol needed to communicate with the FTDI chips onboard the shift
 knob hardware. This class can be used as a template for creating and sending
 message to an FTDI-enabled device.
