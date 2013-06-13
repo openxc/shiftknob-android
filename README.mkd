@@ -1,7 +1,7 @@
 OpenXC Shift Knob
 =================
 
-**ABOUT:** The Haptic Feedback Shift Knob is a manual transmission shift knob
+The Haptic Feedback Shift Knob is a manual transmission shift knob
 capable of sending haptic and visual signals to the driver. Using a built in
 algorithm, the Shift Knob determines when the driver should shift for best
 performance and then sends an appropriate haptic pulse through the driver's hand
@@ -129,7 +129,7 @@ message to an FTDI-enabled device.
 
 ## Dependencies
 
-**Open XC Libraries:** The [Open XC Android
+**OpenXC Libraries:** The [OpenXC Android
 API](https://github.com/openxc/openxc-android handles all vehicle data
 connections. The library includes [installation
 instructions](http://openxcplatform.com/android/api-guide.html), example code
