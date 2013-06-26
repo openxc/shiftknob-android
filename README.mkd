@@ -1,20 +1,22 @@
 OpenXC Shift Knob
 =================
 
-**ABOUT:** The Haptic Feedback Shift Knob is a manual transmission shift knob capable of sending haptic and 
-visual signals to the driver. Using a built in algorithm, the Shift Knob determines when the driver 
-should shift for best performance and then sends an appropriate haptic pulse through the driver's 
-hand signalling that he or she should shift. 
+The Haptic Feedback Shift Knob is a manual transmission shift knob
+capable of sending haptic and visual signals to the driver. Using a built in
+algorithm, the Shift Knob determines when the driver should shift for best
+performance and then sends an appropriate haptic pulse through the driver's hand
+signalling that he or she should shift.
 
-For more details on the complete project, visit the [OpenXC Shift Knob]
-(http://openxcplatform.com/projects/shift-knob.html) webpage. 
+For more details on the complete project, visit the [OpenXC Shift
+Knob](http://openxcplatform.com/projects/shift-knob.html) webpage.
 
 ## Shift Indicator
 
-The Shift Indicator app is the Android side of the Shift Knob. The app reads in select vehicle data,
-calculates the point at which the driver should shift, and then sends the cooresponding haptic, visual,
-and auditory signals to the driver. The app also outputs a color value and digit value to be displayed
-on the Shift Knob 7 segment display and RGB LEDs.
+The Shift Indicator app is the Android side of the Shift Knob. The app reads in
+select vehicle data, calculates the point at which the driver should shift, and
+then sends the corresponding haptic, visual, and auditory signals to the driver.
+The app also outputs a color value and digit value to be displayed on the Shift
+Knob 7 segment display and RGB LEDs.
 
 Below is a current list of the outputs:
 
@@ -26,33 +28,61 @@ Below is a current list of the outputs:
 
 ## Shift Calculation
 
-Some vehicles are equipped with a `shift_recommendation` CAN message. In this case, the Android app can simply
-listen for this message and then send the appropriate signal. Most vehicles, however, do not have this message
-on CAN. For those vehicles, the app locally calculates the point at which the driver should shift. This point is cleverly called the `shift point`. 
+Some vehicles are equipped with a `shift_recommendation` CAN message. In this
+case, the Android app can simply listen for this message and then send the
+appropriate signal. Most vehicles, however, do not have this message on CAN. For
+those vehicles, the app locally calculates the point at which the driver should
+shift. This point is cleverly called the `shift point`.
 
 ### When to Shift
 
-There are a few different methods by which a driver could choose his or her shift point. For drag racers, this might be at a set rpm near the engine rev limiter to have the quickest acceleration down the track. In this sceneario, the shift point would be something like 6,000 rpm. Whenever the engine RPMs reach 6,000 RPM, the app would send the appropriate signals to the driver telling him or her to shift to the next gear.
+There are a few different methods by which a driver could choose his or her
+shift point. For drag racers, this might be at a set rpm near the engine rev
+limiter to have the quickest acceleration down the track. In this scenario, the
+shift point would be something like 6,000 rpm. Whenever the engine RPMs reach
+6,000 RPM, the app would send the appropriate signals to the driver telling him
+or her to shift to the next gear.
 
-A second method would be to select the very lowest possible RPM with hopes to increase fuel economy. In this case, the app would tell the driver when to shift based on the engine RPM **IF** the vehicle were to be in the *next gear*. For example, let us say that the lowest possible RPM is 1,500 RPM. This would mean that if the driver were to slow down while the transmission was in gear such that the RPM dropped below 1,500 RPM, the car might shake or stall or not have a usable amount of torque. Now let's say that a driver is accelerating along and currently in second gear. In order to be able to shift into third gear, the car must first be going fast enough such that if the driver were to shift into third gear, the engine RPM would be equal or above 1,500 RPM.
+A second method would be to select the very lowest possible RPM with hopes to
+increase fuel economy. In this case, the app would tell the driver when to shift
+based on the engine RPM **IF** the vehicle were to be in the *next gear*. For
+example, let us say that the lowest possible RPM is 1,500 RPM. This would mean
+that if the driver were to slow down while the transmission was in gear such
+that the RPM dropped below 1,500 RPM, the car might shake or stall or not have a
+usable amount of torque. Now let's say that a driver is accelerating along and
+currently in second gear. In order to be able to shift into third gear, the car
+must first be going fast enough such that if the driver were to shift into third
+gear, the engine RPM would be equal or above 1,500 RPM.
 
-A third method would be an extension of the second method. In this method, the lowest possible RPM or the `minRPM` scales upwards based on the accelerator pedal position (which we interpret as the "requested torque"). If the driver wants to accelerate more quickly, then the app needs to wait until later in the RPM range to tell the driver when to shift. The figure below shows how a linear and a quadratic function can be used to calculate the shift point based on acceleration pedal position and RPM of the engine should the driver shift to the next gear. 
+A third method would be an extension of the second method. In this method, the
+lowest possible RPM or the `minRPM` scales upwards based on the accelerator
+pedal position (which we interpret as the "requested torque"). If the driver
+wants to accelerate more quickly, then the app needs to wait until later in the
+RPM range to tell the driver when to shift. The figure below shows how a linear
+and a quadratic function can be used to calculate the shift point based on
+acceleration pedal position and RPM of the engine should the driver shift to the
+next gear.
 
-![Shift Timing](/docs/plot.JPG)
+![Shift
+Timing](https://raw.github.com/openxc/shiftknob-android/master/docs/plot.JPG)
 
 ### Equation
 
-The Shift Indicator app uses the third method described above and implements a quadratic function for calculating when the driver should shift. The equation is shown below. Values `mScaler`, `mCurvature`, and `mRpmOffset` of the algorithm below must be optimized for each specific vehicle. These values can be changed in the Vehicle-Specific Section of the code.
+The Shift Indicator app uses the third method described above and implements a
+quadratic function for calculating when the driver should shift. The equation is
+shown below. Values `mScaler`, `mCurvature`, and `mRpmOffset` of the algorithm
+below must be optimized for each specific vehicle. These values can be changed
+in the Vehicle-Specific Section of the code.
 
-**TEMPLATE:** 
+**TEMPLATE:**
 
     nextRPM = mScaler*mPedalPos*mPedalPos - mCurvature*mPedalPos + mRpmOffset
 
 Vehicle Specific Values:
 
-1. `mScaler` 
+1. `mScaler`
 1. `mCurvature`
-1. `mRpmOffset` 
+1. `mRpmOffset`
 
 ## Supported Vehicles
 
@@ -62,35 +92,44 @@ Vehicle Specific Values:
 
 ### Adding Additional Vehicles
 
-To add another vehicle, create an additional vehicle name and data values in the `addVehicleSpinnerListener()` as well as the string array used by the settings class. The developer needs to calculate the total driveline gear ratio for each gear. This can be done by dividing `engine_speed` by `vehicle_speed` in each gear. The Focus ST variables can be used as a template for creating new shift calculation variables detailed above in the "Equation" section.  
+To add another vehicle, create an additional vehicle name and data values in the
+`addVehicleSpinnerListener()` as well as the string array used by the settings
+class. The developer needs to calculate the total driveline gear ratio for each
+gear. This can be done by dividing `engine_speed` by `vehicle_speed` in each
+gear. The Focus ST variables can be used as a template for creating new shift
+calculation variables detailed above in the "Equation" section.
 
 ## ArduinoHardware Class
 
-All communication with the Shift Knob hardware is handled in the ArduinoHardware class. This class has individual functions such as `turnOnShiftIndication()` and `sendDigit(int i)` that create JSON objects (using the JsonBuilder class) and send them as string messages to the hardware. To add a new message, simply create a function and add the appropriate JSON field variables. 
+All communication with the Shift Knob hardware is handled in the
+`ArduinoHardware` class. This class has individual functions such as
+`turnOnShiftIndication()` and `sendDigit(int i)` that create JSON objects (using
+the `JsonBuilder` class) and send them as string messages to the hardware. To
+add a new message, simply create a function and add the appropriate JSON field
+variables.
 
-ArduinoHardware uses the OpenXC fork of [FTDriver][] to initiate and handle the serial port protocol needed to communicate with the FTDI chips onboard the shift knob hardware. This class can be used as a template for creating and sending message to an FTDI-enabled device.
+`ArduinoHardware` uses the OpenXC fork of [FTDriver][] to initiate and handle the
+serial port protocol needed to communicate with the FTDI chips onboard the shift
+knob hardware. This class can be used as a template for creating and sending
+message to an FTDI-enabled device.
 
 ### Supported JSON Messages
 
-`{"name": "shift", "value": 1}`
-	
-* value is either 1 or 0. acting as a boolean.
-	
-`{"name": "color", "value": 100}`   
-	
-* value is an integer 0 to 255
-	
-`{"name": "gear", "value": 1}`      
+See the [Arduino firmware](https://github.com/openxc/shiftknob-firmware)
+repostiroy for details on the JSON-formatted message protocol.
 
-* value is 0 to 9
-	
 ## Dependencies
 
-**Open XC Libraries:** The [Open XC Android API](https://github.com/openxc/openxc-android handles all vehicle data 
-connections. The library includes [installation instructions](http://openxcplatform.com/android/api-guide.html),
-example code and additional documentation in the README file. This library is needed to access any vehicle data.
+**OpenXC Libraries:** The [OpenXC Android
+API](https://github.com/openxc/openxc-android handles all vehicle data
+connections. The library includes [installation
+instructions](http://openxcplatform.com/android/api-guide.html), example code
+and additional documentation in the README file. This library is needed to
+access any vehicle data.
 
-**FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download the OpenXC fork of this library and import it into the same Eclipse workspace as the Shift Indicator project. 
+**FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download
+the OpenXC fork of this library and import it into the same Eclipse workspace as
+the Shift Indicator project.
 
 If there are still errors, go to Android->Properties for the
 ShiftIndicator project and manually re-link the `openxc` and `FTDriver`
@@ -100,27 +139,29 @@ libraries at the bottom of the window.
 
 This repository is one of 4 repositories listed below:
 
-**3D Design** - The [shiftknob-3Ddesign](http://github.com/openxc/shiftknob-3Ddesign) 
-repository contains .STL and STEP files for the 3D printable shift knob housings as well as documentation
-for creating your own physical shift knob design that works with the PCBs already designed.
+**3D Design** - The
+[shiftknob-3Ddesign](http://github.com/openxc/shiftknob-3Ddesign) repository
+contains .STL and STEP files for the 3D printable shift knob housings as well as
+documentation for creating your own physical shift knob design that works with
+the PCBs already designed.
 
-**Hardware** - The [shiftknob-hardware](http://github.com/openxc/shiftknob-hardware) 
-repository contains Eagle schematics and PCB layouts for the shift knob embedded hardware.
+**Hardware** - The
+[shiftknob-hardware](http://github.com/openxc/shiftknob-hardware) repository
+contains Eagle schematics and PCB layouts for the shift knob embedded hardware.
 
-**Firmware** - The [shiftknob-firmware](http://github.com/openxc/shiftknob-firmware) 
-repository contains Arduino source code to run on the embedded system as well as other firmware 
-versions for differing applications. 
+**Firmware** - The
+[shiftknob-firmware](http://github.com/openxc/shiftknob-firmware) repository
+contains Arduino source code to run on the embedded system as well as other
+firmware versions for differing applications.
 
-**Android** - The [shiftknob-android](http://github.com/openxc/shiftknob-android) 
-repository contains the Android application to run on the OpenXC host device. This app sends the
-appropriate signals to the Shift Knob embedded system.
+**Android** - The
+[shiftknob-android](http://github.com/openxc/shiftknob-android) repository
+contains the Android application to run on the OpenXC host device. This app
+sends the appropriate signals to the Shift Knob embedded system.
 
 ## License
 
-The Android and firmware source code is available under the BSD open source
-license.
-
-The hardware schematics and enclosure design are available under the 
-[Creative Commons Atribution 3.0 Unported](http://creativecommons.org/licenses/by/3.0/deed.en_US) license.
+The Android source code in this repository is available under the BSD open
+source license.
 
 [FTDriver]: https://github.com/openxc/FTDriver
