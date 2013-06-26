@@ -316,7 +316,7 @@ public class MainActivity extends Activity {
                     mScaler = 1.2;
                     mCurvature = -30;
                     mRpmOffset = 1300;
-                }
+                } 
                 
                 if (selectedVehicle.equals("Focus ST")) { 
                     mGearRatios = new int[]{ 
@@ -333,7 +333,7 @@ public class MainActivity extends Activity {
                     mScaler = 1.2;
                     mCurvature = -30;
                     mRpmOffset = 1300;
-                }
+                } 
                 
                 if (selectedVehicle.equals("Mustang GT")) {
                     mGearRatios = new int[] {
@@ -350,6 +350,40 @@ public class MainActivity extends Activity {
                     mScaler = 1.3;
                     mCurvature = -20;
                     mRpmOffset = 1680;
+                } 
+                
+                if (selectedVehicle.equals("2013 Mustang GT500")) {
+                    mGearRatios = new int[] {
+                            0, // Neutral
+                            67, // 1st
+                            46, // 2nd
+                            33, // 3rd
+                            25, // 4th
+                            19, // 5th
+                            12 // 6th
+                      };
+                      mBasePedalPosition = 10.0;
+                      mMinRPM = 1600;
+                      mScaler = 1.3;
+                      mCurvature = -20;
+                      mRpmOffset = 1680;
+                } 
+                
+                if (selectedVehicle.equals("2012 Mustang GT500")) {
+                    mGearRatios = new int[] {
+                            0, // Neutral
+                            127, // 1st
+                            76, // 2nd
+                            56, // 3rd
+                            43, // 4th
+                            32, // 5th
+                            21 // 6th
+                      };
+                      mBasePedalPosition = 10.0;
+                      mMinRPM = 1600;
+                      mScaler = 1.3;
+                      mCurvature = -20;
+                      mRpmOffset = 1680;
                 }
             }
 
