@@ -363,28 +363,28 @@ public class MainActivity extends Activity {
                             19, // 5th
                             12 // 6th
                       };
-                      mBasePedalPosition = 10.0;
-                      mMinRPM = 1600;
+                      mBasePedalPosition = 12.0;
+                      mMinRPM = 1700;
                       mScaler = 1.3;
                       mCurvature = -20;
-                      mRpmOffset = 1680;
+                      mRpmOffset = 1750;
                 } 
                 
                 if (selectedVehicle.equals("2012 Mustang GT500")) {
                     mGearRatios = new int[] {
                             0, // Neutral
-                            127, // 1st
-                            76, // 2nd
-                            56, // 3rd
-                            43, // 4th
-                            32, // 5th
-                            21 // 6th
+                            86, // 1st
+                            51, // 2nd
+                            37, // 3rd
+                            29, // 4th
+                            21, // 5th
+                            14 // 6th
                       };
-                      mBasePedalPosition = 10.0;
-                      mMinRPM = 1600;
-                      mScaler = 1.3;
+                      mBasePedalPosition = 12.0;
+                      mMinRPM = 1500;
+                      mScaler = 1.2;
                       mCurvature = -20;
-                      mRpmOffset = 1680;
+                      mRpmOffset = 1570;
                 }
             }
 
@@ -430,7 +430,7 @@ public class MainActivity extends Activity {
          * probably shifting or slowing down, so no shift signal is needed.
          */
 
-        if (!mPowerStatus || mPedalPos < 10) {
+        if (!mPowerStatus) {
             return;
         }
 
@@ -488,7 +488,6 @@ public class MainActivity extends Activity {
     public void handleGearPosition(double r, long t) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
-                mNextRatio = mGearRatios[i];
                 
                 // if the vehicle is in a new gear, then no longer need the mJustShifted command
                 if (i != mCurrentGear) {
@@ -504,6 +503,13 @@ public class MainActivity extends Activity {
                     updateGear(i);
                 }
                 
+                if (i == mGearRatios.length - 1) {
+                    // if the vehicle is in the last gear, then set the next ratio to 1
+                    // to nullify shift calculation
+                    mNextRatio = 1;
+                } else {
+                    mNextRatio = mGearRatios[i+1];
+                }
                 break;
             }
 
@@ -511,7 +517,7 @@ public class MainActivity extends Activity {
                 // if the loop gets to here, then the vehicle is thought to be
                 // in Neutral
                 mJustShifted = false;
-                if (i != mCurrentGear) {
+                if (mCurrentGear != 0) {
                     mNewGearTime = t;
                     mCurrentGear = 0;
                 }
