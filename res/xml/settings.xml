@@ -15,8 +15,8 @@
 	        android:key="pref_calculation_mode"
 	        android:title="@string/pref_calculation_title" 
 	        android:summary="@string/pref_calculation_summary"
-	        android:switchTextOn="@string/pref_calculation_off"
-	        android:switchTextOff="@string/pref_calculation_on"
+	        android:switchTextOn="@string/pref_calculation_on"
+	        android:switchTextOff="@string/pref_calculation_off"
 	        android:defaultValue="true"/>
 	    <CheckBoxPreference 
 	        android:key="pref_haptic_feedback"

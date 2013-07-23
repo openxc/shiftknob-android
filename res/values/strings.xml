@@ -11,9 +11,9 @@
 	
 	<string name="pref_operation_title">Shift Indicator Options</string>
 	
-	<string name="pref_calculation_title">Calculation Method</string>
-	<string name="pref_calculation_summary">Use CAN signals or calculate locally</string>
-	<string name="pref_calculation_off">CAN Signals</string>
+	<string name="pref_calculation_title">Shift Point Algorithm</string>
+	<string name="pref_calculation_summary">Calculate or wait for CAN signal</string>
+	<string name="pref_calculation_off">CAN Signal</string>
 	<string name="pref_calculation_on">Calculate</string>
 	
 	<string name="pref_haptic_title">Vibration</string>
