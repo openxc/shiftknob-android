@@ -21,6 +21,7 @@
     </string-array>
     
     <string-array name="vehicles">
+    	<item>Fiesta ST</item>
     	<item>Figo</item>
         <item>Focus ST</item>
         <item>Mustang GT</item>

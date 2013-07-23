@@ -303,6 +303,23 @@ public class MainActivity extends Activity {
                 Toast.makeText(parent.getContext(), 
                         "Selected Vehicle: "+selectedVehicle, Toast.LENGTH_SHORT).show();
                 // Load Vehicle-Specific Data: //
+                if (selectedVehicle.equals("Fiesta ST")) {
+                    mGearRatios = new int[]{
+                            0, // Neutral
+                            133, // 1st
+                            72, // 2nd
+                            47, // 3rd
+                            36, // 4th
+                            29, // 5th
+                            24 // 6th  
+                    };
+                    mBasePedalPosition = 15.0;
+                    mMinRPM = 1300;
+                    mScaler = .685;
+                    mCurvature = -15;
+                    mRpmOffset = 1380;
+                }
+                
                 if (selectedVehicle.equals("Figo")) {
                     mGearRatios = new int[]{
                           0, // Neutral
