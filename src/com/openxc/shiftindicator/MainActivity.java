@@ -483,6 +483,8 @@ public class MainActivity extends Activity {
         double nextRPM;
         if (mPedalPos >= mBasePedalPosition) {
             nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
+        } else if (mBasePedalPosition <= 10) {
+            return;
         } else {
             nextRPM = mMinRPM;
         }
