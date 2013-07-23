@@ -84,11 +84,13 @@ Vehicle Specific Values:
 1. `mCurvature`
 1. `mRpmOffset`
 
-## Supported Vehicles
+## Supported Ford Vehicles
 
-1. Ford Mustang GT
-1. Ford Focus ST
-1. Ford Figo
+1. Fiesta ST
+1. Figo
+1. Focus ST
+1. Mustang GT
+1. Shelby Mustang GT500
 
 ### Adding Additional Vehicles
 
