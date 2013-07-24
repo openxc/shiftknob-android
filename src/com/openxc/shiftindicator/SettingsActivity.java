@@ -24,7 +24,6 @@ public class SettingsActivity extends PreferenceActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPref, String key) {
         // TODO Auto-generated method stub
         if (key.equals(KEY_PREF_OPERATION_MODE)) {
-            Log.d("shift", "got to this point1");
             Preference shiftPointPref = findPreference(KEY_PREF_SHIFT_POINT);
             Preference algorithmPref = findPreference(KEY_PREF_CALCULATION);
             if (sharedPref.getBoolean(key, false)) {
@@ -34,10 +33,12 @@ public class SettingsActivity extends PreferenceActivity implements
                 shiftPointPref.setEnabled(false);
                 algorithmPref.setEnabled(true);
             }
+           
         } else if (key.equals(KEY_PREF_SHIFT_POINT)) {
-            Log.d("shift", "got to this point2");
             Preference shiftPointPref = findPreference(KEY_PREF_SHIFT_POINT);
             shiftPointPref.setSummary(sharedPref.getString(KEY_PREF_SHIFT_POINT, "")+" RPM");
+            int shiftPoint = Integer.parseInt(sharedPref.getString(KEY_PREF_SHIFT_POINT, ""));
+            MainActivity.setShiftPoint(shiftPoint);
         }
     }
     
@@ -52,6 +53,7 @@ public class SettingsActivity extends PreferenceActivity implements
             shiftPointPref.setEnabled(false);
             algorithmPref.setEnabled(true);
         }
+        shiftPointPref.setSummary(operationPref.getString(KEY_PREF_SHIFT_POINT, "")+" RPM");
     }
     
     @Override

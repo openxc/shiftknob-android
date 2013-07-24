@@ -73,6 +73,8 @@ public class MainActivity extends Activity {
     private long mShiftCommandTime;
     private long mNewGearTime;
     private boolean mCalculating = false;
+    private static int mShiftPoint;
+    private boolean mAboveShiftPoint = false;
     
     private int mCurrentGear;
     boolean mJustShifted;
@@ -100,7 +102,8 @@ public class MainActivity extends Activity {
         Log.i(TAG, "Shift Indicator created");
 
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
+        mShiftPoint = Integer.parseInt(mSharedPrefs.getString("pref_shift_point", "5000"));
+        
         mMediaPlayer = MediaPlayer.create(this, R.raw.chime);
 
         Intent intent = new Intent(this, VehicleManager.class);
@@ -503,10 +506,16 @@ public class MainActivity extends Activity {
                 shift();
             }
         } else {
-            int userShiftPoint = Integer.parseInt(mSharedPrefs.getString("pref_shift_point", "5000"));
-            if (mPedalPos >= 10 && mEngineSpeed >= userShiftPoint) {
-                shift();
+            if (mPedalPos < 10) {
+                return;
             }
+            if (mEngineSpeed >= mShiftPoint && !mAboveShiftPoint) {
+                shift();
+                mAboveShiftPoint = true;
+            }
+            if (mEngineSpeed < mShiftPoint) {
+                mAboveShiftPoint = false; 
+             }
         }
     }
     
@@ -528,7 +537,7 @@ public class MainActivity extends Activity {
                 if (i != mCurrentGear) {
                     mJustShifted = false;
                     mNewGearTime = t;
-                    mCurrentGear = i;
+                    mCurrentGear = i; 
                 }
                 
                 // if the vehicle has been in the same gear for more than 750 milliseconds
@@ -633,6 +642,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    public static void setShiftPoint(int s) {
+        mShiftPoint = s;
+    }
+    
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
