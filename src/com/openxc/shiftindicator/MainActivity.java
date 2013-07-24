@@ -251,7 +251,8 @@ public class MainActivity extends Activity {
         public void receive(Measurement measurement) {
             final TransmissionGearPosition status = (TransmissionGearPosition) measurement;
 
-            if (!mSharedPrefs.getBoolean("pref_calculation_mode", true)) {
+            if (!mSharedPrefs.getBoolean("pref_calculation_mode", true) &&
+                    !mSharedPrefs.getBoolean("pref_operation_mode", true)) {
                 switch (status.getValue().enumValue()) {
                 case FIRST:
                     updateGear(1);
@@ -286,7 +287,8 @@ public class MainActivity extends Activity {
         public void receive(Measurement measurement) {
             final ShiftRecommendation updated_value = (ShiftRecommendation) measurement;
 
-            if (!mSharedPrefs.getBoolean("pref_calculation_mode", true)) {
+            if (!mSharedPrefs.getBoolean("pref_calculation_mode", true) &&
+                    !mSharedPrefs.getBoolean("pref_operation_mode", true)) {
                 if (updated_value.getValue().enumValue() == ShiftRecommendation.ShiftSignal.UPSHIFT
                         && mPowerStatus) {
                     shift();
