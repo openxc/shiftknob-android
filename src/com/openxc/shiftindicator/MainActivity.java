@@ -2,8 +2,6 @@ package com.openxc.shiftindicator;
 
 import java.util.Date;
 
-import jp.ksksue.driver.serial.FTDriver;
-
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;
@@ -18,7 +16,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
