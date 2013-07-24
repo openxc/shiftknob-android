@@ -442,20 +442,13 @@ public class MainActivity extends Activity {
          * and the rpm of the engine in the NEXT gear. The higher the throttle
          * position, the higher the rpm in the next gear (quick acceleration).
          * 
-         * First, if the powerStatus switch is off, then don't do the calculation.
-         * Secondly, if the pedal position is less than 10, then the driver is
-         * probably shifting or slowing down, so no shift signal is needed.
+         * If the powerStatus switch is off, then don't do the calculation.
          */
 
         if (!mPowerStatus) {
             return;
         }
 
-        /**
-         * If the pedal position is above the minimum threshold, then the driver
-         * is thought to be holding a constant speed or accelerating and thus
-         * the shift signal point should be calculated.
-         */
         shouldDriverShift(currentTime);
     }
     
