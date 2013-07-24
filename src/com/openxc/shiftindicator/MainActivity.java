@@ -222,7 +222,8 @@ public class MainActivity extends Activity {
                 }
             });
 
-            if (mSharedPrefs.getBoolean("pref_calculation_mode", false)) {
+            if (mSharedPrefs.getBoolean("pref_calculation_mode", false) || 
+                    mSharedPrefs.getBoolean("pref_operation_mode", false)) {
                 vehicleStateCalculation();
             }
         }
@@ -455,35 +456,53 @@ public class MainActivity extends Activity {
     /**
      * SHOULD DRIVER SHIFT:
      * 
-     * Values A, B, and C of the algorithm below must be optimized for each
-     * specific vehicle. These values can be changed in the Vehicle-Specific
-     * Section above.
+     * 2 Operation Modes. 
      * 
-     * TEMPLATE:
-     *   nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C 
+     * MODE 1: Efficiency Mode
+     *  
+     *  Values A, B, and C of the algorithm below must be optimized for each
+     *  specific vehicle. These values can be changed in the Vehicle-Specific
+     *  Section above.
      * 
-     * If the calculated nextRPM is less than RPM the vehicle would be in if
-     * the transmission were shifted to the next gear, then the shift signal 
-     * is sent to the shift knob.
+     *  TEMPLATE:
+     *    nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C 
      * 
-     * Additional criteria:
-     *  1. Do not send another "shift signal" if a signal was just sent (mJustShifted)
-     *  2. Wait until after the driver has been in a gear for 1 second before sending
-     *  another shift signal.
+     *  If the calculated nextRPM is less than RPM the vehicle would be in if
+     *  the transmission were shifted to the next gear, then the shift signal 
+     *  is sent to the shift knob.
+     * 
+     *  Additional criteria:
+     *   1. Do not send another "shift signal" if a signal was just sent (mJustShifted)
+     *   2. Wait until after the driver has been in a gear for 1 second before sending
+     *   another shift signal.
+     *   
+     * MODE 2: Performance Mode
+     * 
+     *   This operation mode is simple. Tell the driver to shift once the
+     *   engine speed is equal to or exceeds the user-defined shift point.
+     *   Only send the shift signal if the pedal position is greater than 
+     *   or equal to 10% (which we assume means the driver is accelerating).
      */
     
     public void shouldDriverShift(long t) {
-        double nextRPM;
-        if (mPedalPos >= mBasePedalPosition) {
-            nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
-        } else if (mBasePedalPosition <= 10) {
-            return;
+        if (!mSharedPrefs.getBoolean("pref_operation_mode", false)) {
+            double nextRPM;
+            if (mPedalPos >= mBasePedalPosition) {
+                nextRPM = mScaler * mPedalPos * mPedalPos + mCurvature * mPedalPos + mRpmOffset;
+            } else if (mBasePedalPosition <= 10) {
+                return;
+            } else {
+                nextRPM = mMinRPM;
+            }
+    
+            if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted && (t-mNewGearTime > 1000)) {
+                shift();
+            }
         } else {
-            nextRPM = mMinRPM;
-        }
-
-        if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted && (t-mNewGearTime > 1000)) {
-            shift();
+            int userShiftPoint = Integer.parseInt(mSharedPrefs.getString("pref_shift_point", "5000"));
+            if (mPedalPos >= 10 && mEngineSpeed >= userShiftPoint) {
+                shift();
+            }
         }
     }
     
