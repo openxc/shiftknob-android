@@ -48,17 +48,6 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/gear_position"
-        android:layout_width="100sp"
-        android:layout_height="100sp"
-        android:layout_above="@+id/pedal_position_label"
-        android:layout_alignLeft="@+id/pedal_position_label"
-        android:textColor="#FFFFFF"
-        android:textSize="90sp"
-        android:text="-"
-        android:textStyle="bold" />
-
-    <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,5 +117,17 @@
     	android:padding="5dp"
     	android:text="Color:"
     	android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+    	android:id="@+id/gear_position"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_above="@+id/textView1"
+    	android:layout_alignRight="@+id/led_bar"
+    	android:padding="10dp"
+    	android:text="-"
+    	android:textColor="#FFFFFF"
+    	android:textSize="90sp"
+    	android:textStyle="bold" />
 
 </RelativeLayout>
