@@ -51,10 +51,12 @@ public class ArduinoHardware {
     }
     
     private void sendOut(String s) {
-        try {
-            mFTDriver.write(s);
-        } catch (Exception e) {
-            Log.d(TAG, "FTDriver.write() just threw an exception.  Is the cable plugged in?");
+        if (mFTDriver.isConnected()) {
+            try {
+                mFTDriver.write(s);
+            } catch (Exception e) {
+                Log.d(TAG, "FTDriver.write() just threw an exception.  Is the cable plugged in?");
+            }
         }
     }
     
