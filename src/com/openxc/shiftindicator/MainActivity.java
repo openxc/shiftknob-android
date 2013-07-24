@@ -574,7 +574,11 @@ public class MainActivity extends Activity {
         }
 
         if (mSharedPrefs.getBoolean("pref_audio_feedback", false)) {
-            mMediaPlayer.start();
+            MainActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    mMediaPlayer.start();
+                }
+            });
         }
 
         if (mSharedPrefs.getBoolean("pref_visual_feedback", false)) {
