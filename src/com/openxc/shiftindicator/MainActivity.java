@@ -67,9 +67,9 @@ public class MainActivity extends Activity {
     private boolean mPowerStatus = true;
     private SeekBar mLEDbar;
     private View mLayout;
-    private int mEngineSpeed;
-    private double mVehicleSpeed;
-    private double mPedalPos;
+    private volatile int mEngineSpeed;
+    private volatile double mVehicleSpeed;
+    private volatile double mPedalPos;
     private long mShiftCommandTime;
     private long mNewGearTime;
     private boolean mCalculating = false;
@@ -222,7 +222,7 @@ public class MainActivity extends Activity {
                     mEngineSpeedView.setText("" + mEngineSpeed);
                 }
             });
-            
+
             // Only calculate the vehicle state if the operation mode is set
             // to "Performance" OR if the efficiency shift point algorithm is
             // set to "Calculate" OR if the app is currently NOT calculating 
