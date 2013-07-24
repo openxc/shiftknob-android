@@ -9,7 +9,7 @@
 
     <SeekBar
         android:id="@+id/led_bar"
-        android:layout_width="500dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
         android:layout_centerInParent="true"
@@ -118,5 +118,15 @@
     	android:entries="@array/vehicles"
     	android:prompt="@string/vehicle_prompt"
     	android:textSize="25sp" />
+
+    <TextView
+    	android:id="@+id/seek_bar_label"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerVertical="true"
+    	android:layout_toLeftOf="@+id/led_bar"
+    	android:padding="5dp"
+    	android:text="Color:"
+    	android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>
