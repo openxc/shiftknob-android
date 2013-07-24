@@ -23,7 +23,7 @@
 	    	android:key="pref_shift_point"
 	    	android:summary="@string/pref_shift_point_summary"
 	    	android:title="@string/pref_shift_point_title"
-	    	android:enabled="false"
+	    	android:dialogTitle="@string/shift_point_dialog"
 	    	android:defaultValue="5000"/>
 	    <CheckBoxPreference 
 	        android:key="pref_haptic_feedback"

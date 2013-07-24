@@ -18,6 +18,7 @@
 	
 	<string name="pref_shift_point_summary">Input RPM value</string>
 	<string name="pref_shift_point_title">Performance: Shift Point</string>
+	<string name="shift_point_dialog">Shift Point: Enter RPM</string>
 	
 	<string name="pref_haptic_title">Vibration</string>
 	<string name="pref_audio_title">Audible Tone</string>
