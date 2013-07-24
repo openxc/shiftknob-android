@@ -11,10 +11,13 @@
 	
 	<string name="pref_operation_title">Shift Indicator Options</string>
 	
-	<string name="pref_calculation_title">Shift Point Algorithm</string>
+	<string name="pref_calculation_title">Efficiency: Shift Point Algorithm</string>
 	<string name="pref_calculation_summary">Calculate or wait for CAN signal</string>
 	<string name="pref_calculation_off">CAN Signal</string>
 	<string name="pref_calculation_on">Calculate</string>
+	
+	<string name="pref_shift_point_summary">Input RPM value</string>
+	<string name="pref_shift_point_title">Performance: Shift Point</string>
 	
 	<string name="pref_haptic_title">Vibration</string>
 	<string name="pref_audio_title">Audible Tone</string>
@@ -25,8 +28,8 @@
 	
 	<string name="pref_mode_title">Select Coaching Mode</string>
 	<string name="pref_mode_off">Performance</string>
-	<string name="pref_mode_on">Fuel Economy</string>
-	<string name="pref_mode_summary">Fuel Economy/Performance</string>
+	<string name="pref_mode_on">Fuel Efficiency</string>
+	<string name="pref_mode_summary">Efficiency/Performance</string>
 	
 	<string name="vehicle_prompt">Choose a Vehicle</string>
 

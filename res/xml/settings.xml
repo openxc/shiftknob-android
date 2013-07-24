@@ -18,6 +18,13 @@
 	        android:switchTextOn="@string/pref_calculation_on"
 	        android:switchTextOff="@string/pref_calculation_off"
 	        android:defaultValue="true"/>
+	    <EditTextPreference
+	    	android:inputType="number"
+	    	android:key="pref_shift_point"
+	    	android:summary="@string/pref_shift_point_summary"
+	    	android:title="@string/pref_shift_point_title"
+	    	android:enabled="false"
+	    	android:defaultValue="5000"/>
 	    <CheckBoxPreference 
 	        android:key="pref_haptic_feedback"
 	        android:title="@string/pref_haptic_title"
