@@ -221,7 +221,10 @@ public class MainActivity extends Activity {
                     mEngineSpeedView.setText("" + mEngineSpeed);
                 }
             });
-
+            
+            // Only calculate the vehicle state if the operation mode is set
+            // to "Performance" OR if the efficiency shift point algorithm is
+            // set to "Calculate."
             if (mSharedPrefs.getBoolean("pref_calculation_mode", false) || 
                     mSharedPrefs.getBoolean("pref_operation_mode", false)) {
                 vehicleStateCalculation();
@@ -439,9 +442,7 @@ public class MainActivity extends Activity {
         handleGearPosition(ratio, currentTime);
 
         /**
-         * SHIFT CALCULATION: The upshift signal is based on throttle position
-         * and the rpm of the engine in the NEXT gear. The higher the throttle
-         * position, the higher the rpm in the next gear (quick acceleration).
+         * SHIFT CALCULATION:
          * 
          * If the powerStatus switch is off, then don't do the calculation.
          */
