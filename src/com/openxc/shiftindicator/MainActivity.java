@@ -75,6 +75,7 @@ public class MainActivity extends Activity {
     private double mPedalPos;
     private long mShiftCommandTime;
     private long mNewGearTime;
+    private boolean mCalculating = false;
     
     private int mCurrentGear;
     boolean mJustShifted;
@@ -224,9 +225,11 @@ public class MainActivity extends Activity {
             
             // Only calculate the vehicle state if the operation mode is set
             // to "Performance" OR if the efficiency shift point algorithm is
-            // set to "Calculate."
+            // set to "Calculate" OR if the app is currently NOT calculating 
+            // the current vehicle state.
             if (mSharedPrefs.getBoolean("pref_calculation_mode", false) || 
-                    mSharedPrefs.getBoolean("pref_operation_mode", false)) {
+                    mSharedPrefs.getBoolean("pref_operation_mode", false) ||
+                    !mCalculating) {
                 vehicleStateCalculation();
             }
         }
@@ -426,7 +429,7 @@ public class MainActivity extends Activity {
      * then sent to the shift knob.
      */
     public void vehicleStateCalculation() {
-
+        mCalculating = true;
         /**
          * First, setup the variables that will be needed for the calculations. 
          * Also cancel the visual shift message if the allotted time has 
@@ -452,6 +455,7 @@ public class MainActivity extends Activity {
         }
 
         shouldDriverShift(currentTime);
+        mCalculating = false;
     }
     
     /**
