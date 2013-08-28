@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 
     // USB setup:
     public static final String ACTION_USB_PERMISSION = "com.ford.openxc.USB_PERMISSION";
-    
+
     static ArduinoHardware mArduinoHardware = null;
 
     UsbManager mUsbManager = null;
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
     private boolean mCalculating = false;
     private static int mShiftPoint;
     private boolean mAboveShiftPoint = false;
-    
+
     private int mCurrentGear;
     boolean mJustShifted;
     int mNextRatio = 1;
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
 
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mShiftPoint = Integer.parseInt(mSharedPrefs.getString("pref_shift_point", "5000"));
-        
+
         mMediaPlayer = MediaPlayer.create(this, R.raw.chime);
 
         Intent intent = new Intent(this, VehicleManager.class);
@@ -113,7 +113,7 @@ public class MainActivity extends Activity {
         mPedalView = (TextView) findViewById(R.id.pedal_position);
         mGearPosition = (TextView) findViewById(R.id.gear_position);
         addVehicleSpinnerListener();
-        
+
         mLayout = findViewById(R.id.layout);
         mLayout.setBackgroundColor(Color.BLACK);
 
@@ -225,9 +225,9 @@ public class MainActivity extends Activity {
 
             // Only calculate the vehicle state if the operation mode is set
             // to "Performance" OR if the efficiency shift point algorithm is
-            // set to "Calculate" OR if the app is currently NOT calculating 
+            // set to "Calculate" OR if the app is currently NOT calculating
             // the current vehicle state.
-            if (mSharedPrefs.getBoolean("pref_calculation_mode", false) || 
+            if (mSharedPrefs.getBoolean("pref_calculation_mode", false) ||
                     mSharedPrefs.getBoolean("pref_operation_mode", false) ||
                     !mCalculating) {
                 vehicleStateCalculation();
@@ -309,7 +309,7 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view,
                     int pos, long id) {
                 String selectedVehicle = parent.getItemAtPosition(pos).toString();
-                Toast.makeText(parent.getContext(), 
+                Toast.makeText(parent.getContext(),
                         "Selected Vehicle: "+selectedVehicle, Toast.LENGTH_SHORT).show();
                 // Load Vehicle-Specific Data: //
                 if (selectedVehicle.equals("Fiesta ST")) {
@@ -320,7 +320,7 @@ public class MainActivity extends Activity {
                             47, // 3rd
                             36, // 4th
                             29, // 5th
-                            24 // 6th  
+                            24 // 6th
                     };
                     mBasePedalPosition = 15.0;
                     mMinRPM = 1300;
@@ -328,7 +328,7 @@ public class MainActivity extends Activity {
                     mCurvature = -15;
                     mRpmOffset = 1413;
                 }
-                
+
                 if (selectedVehicle.equals("Figo")) {
                     mGearRatios = new int[]{
                           0, // Neutral
@@ -343,10 +343,10 @@ public class MainActivity extends Activity {
                     mScaler = .5;
                     mCurvature = -15;
                     mRpmOffset = 1413;
-                } 
-                
-                if (selectedVehicle.equals("Focus ST")) { 
-                    mGearRatios = new int[]{ 
+                }
+
+                if (selectedVehicle.equals("Focus ST")) {
+                    mGearRatios = new int[]{
                           0, // Neutral
                           114, // 1st
                           69, // 2nd
@@ -360,8 +360,8 @@ public class MainActivity extends Activity {
                     mScaler = 1.2;
                     mCurvature = -30;
                     mRpmOffset = 1300;
-                } 
-                
+                }
+
                 if (selectedVehicle.equals("Mustang GT")) {
                     mGearRatios = new int[] {
                           0, // Neutral
@@ -377,8 +377,8 @@ public class MainActivity extends Activity {
                     mScaler = 1.3;
                     mCurvature = -20;
                     mRpmOffset = 1680;
-                } 
-                
+                }
+
                 if (selectedVehicle.equals("2013 Mustang GT500")) {
                     mGearRatios = new int[] {
                             0, // Neutral
@@ -394,8 +394,8 @@ public class MainActivity extends Activity {
                       mScaler = 0.8;
                       mCurvature = -20;
                       mRpmOffset = 1625;
-                } 
-                
+                }
+
                 if (selectedVehicle.equals("2012 Mustang GT500")) {
                     mGearRatios = new int[] {
                             0, // Neutral
@@ -415,26 +415,26 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> arg0) { 
+            public void onNothingSelected(AdapterView<?> arg0) {
             }
-            
+
         });
     }
-    
+
     /**
      * VEHICLE STATE CALCULATION:
-     * 
-     * This is the main function of this class. In the 
-     * event that a vehicle is not equipped with a built-in "ShiftRecommendation" 
-     * and "TransmissionGearPosition" signals on CAN, this function will 
+     *
+     * This is the main function of this class. In the
+     * event that a vehicle is not equipped with a built-in "ShiftRecommendation"
+     * and "TransmissionGearPosition" signals on CAN, this function will
      * calculate the gear position and shift point locally. These variables are
      * then sent to the shift knob.
      */
     public void vehicleStateCalculation() {
         mCalculating = true;
         /**
-         * First, setup the variables that will be needed for the calculations. 
-         * Also cancel the visual shift message if the allotted time has 
+         * First, setup the variables that will be needed for the calculations.
+         * Also cancel the visual shift message if the allotted time has
          * passed (cancelShiftTime function).
          */
         if (mVehicleSpeed == 0) {
@@ -443,12 +443,12 @@ public class MainActivity extends Activity {
         double ratio = mEngineSpeed / mVehicleSpeed;
         long currentTime = new Date().getTime();
         cancelShiftTime(currentTime);
-        
+
         handleGearPosition(ratio, currentTime);
 
         /**
          * SHIFT CALCULATION:
-         * 
+         *
          * If the powerStatus switch is off, then don't do the calculation.
          */
 
@@ -459,38 +459,38 @@ public class MainActivity extends Activity {
         shouldDriverShift(currentTime);
         mCalculating = false;
     }
-    
+
     /**
      * SHOULD DRIVER SHIFT:
-     * 
-     * 2 Operation Modes. 
-     * 
+     *
+     * 2 Operation Modes.
+     *
      * MODE 1: Efficiency Mode
-     *  
+     *
      *  Values A, B, and C of the algorithm below must be optimized for each
      *  specific vehicle. These values can be changed in the Vehicle-Specific
      *  Section above.
-     * 
+     *
      *  TEMPLATE:
-     *    nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C 
-     * 
+     *    nextRPM = A*mPedalPos*mPedalPos - B*mPedalPos + C
+     *
      *  If the calculated nextRPM is less than RPM the vehicle would be in if
-     *  the transmission were shifted to the next gear, then the shift signal 
+     *  the transmission were shifted to the next gear, then the shift signal
      *  is sent to the shift knob.
-     * 
+     *
      *  Additional criteria:
      *   1. Do not send another "shift signal" if a signal was just sent (mJustShifted)
      *   2. Wait until after the driver has been in a gear for 1 second before sending
      *   another shift signal.
-     *   
+     *
      * MODE 2: Performance Mode
-     * 
+     *
      *   This operation mode is simple. Tell the driver to shift once the
      *   engine speed is equal to or exceeds the user-defined shift point.
-     *   Only send the shift signal if the pedal position is greater than 
+     *   Only send the shift signal if the pedal position is greater than
      *   or equal to 10% (which we assume means the driver is accelerating).
      */
-    
+
     public void shouldDriverShift(long t) {
         if (!mSharedPrefs.getBoolean("pref_operation_mode", false)) {
             double nextRPM;
@@ -501,7 +501,7 @@ public class MainActivity extends Activity {
             } else {
                 nextRPM = mMinRPM;
             }
-    
+
             if (nextRPM < mVehicleSpeed * mNextRatio && !mJustShifted && (t-mNewGearTime > 1000)) {
                 shift();
             }
@@ -514,39 +514,39 @@ public class MainActivity extends Activity {
                 mAboveShiftPoint = true;
             }
             if (mEngineSpeed < mShiftPoint) {
-                mAboveShiftPoint = false; 
+                mAboveShiftPoint = false;
              }
         }
     }
-    
-    /** 
+
+    /**
      * CALCULATE GEAR POSITION:
-     * 
+     *
      * This function iterates through the known gear ratios for a given vehicle
-     * and compares those values to the current ratio which is computed by 
+     * and compares those values to the current ratio which is computed by
      * dividing mEngineSpeed by mVehicleSpeed. Once the computed ratio is
-     * within 10% of a known ratio, the transmission is thought to be in a 
+     * within 10% of a known ratio, the transmission is thought to be in a
      * specific gear. IF there is no ratio match then the vehicle must be in
      * neutral or the clutch is depressed.
      */
     public void handleGearPosition(double r, long t) {
         for (int i = 1; i < mGearRatios.length; i++) {
             if (mGearRatios[i] * .9 < r && mGearRatios[i] * 1.1 > r) {
-                
+
                 // if the vehicle is in a new gear, then no longer need the mJustShifted command
                 if (i != mCurrentGear) {
                     mJustShifted = false;
                     mNewGearTime = t;
-                    mCurrentGear = i; 
+                    mCurrentGear = i;
                 }
-                
+
                 // if the vehicle has been in the same gear for more than 750 milliseconds
-                // then we can update the UI with the new gear position. This reduces noise in 
+                // then we can update the UI with the new gear position. This reduces noise in
                 // the gear estimation process.
                 else if (t - mNewGearTime > 750) {
                     updateGear(i);
                 }
-                
+
                 if (i == mGearRatios.length - 1) {
                     // if the vehicle is in the last gear, then set the next ratio to 1
                     // to nullify shift calculation
@@ -569,7 +569,7 @@ public class MainActivity extends Activity {
                 else if (t - mNewGearTime > 750){
                     updateGear(0);
                 }
-                
+
                 return;
             }
         }
@@ -619,7 +619,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * cancelShift* removes the "upshift message" from the UI screen after 
+     * cancelShift* removes the "upshift message" from the UI screen after
      * 500 milliseconds.
      */
     private void cancelShiftTime(long t) {
@@ -627,13 +627,13 @@ public class MainActivity extends Activity {
             cancelShift();
         }
     }
-    
+
     public void cancelShiftBoolean(boolean b) {
         if (b) {
             cancelShift();
         }
     }
-    
+
     public void cancelShift() {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
@@ -645,17 +645,16 @@ public class MainActivity extends Activity {
     public static void setShiftPoint(int s) {
         mShiftPoint = s;
     }
-    
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                Log.d(TAG, "Device detached");
-                Bundle extras = intent.getExtras();
-                UsbDevice lostDevice = (UsbDevice) extras.get("device");
-                if (lostDevice.equals(mArduinoHardware.getDevice())) {
-                    mArduinoHardware.end();
+            if(UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action) &&
+                    mSerialPort.isConnected()) {
+                mSerialPort.usbDetached(intent);
+                if(!mSerialPort.isConnected()) {
+                    showToast("Device disconnected");
                 }
             }
         }
