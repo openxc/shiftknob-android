@@ -324,9 +324,9 @@ public class MainActivity extends Activity {
                     };
                     mBasePedalPosition = 15.0;
                     mMinRPM = 1300;
-                    mScaler = .685;
+                    mScaler = .5;
                     mCurvature = -15;
-                    mRpmOffset = 1380;
+                    mRpmOffset = 1413;
                 }
                 
                 if (selectedVehicle.equals("Figo")) {
@@ -340,9 +340,9 @@ public class MainActivity extends Activity {
                     };
                     mBasePedalPosition = 15.0;
                     mMinRPM = 1300;
-                    mScaler = 1.2;
-                    mCurvature = -30;
-                    mRpmOffset = 1300;
+                    mScaler = .5;
+                    mCurvature = -15;
+                    mRpmOffset = 1413;
                 } 
                 
                 if (selectedVehicle.equals("Focus ST")) { 
@@ -390,10 +390,10 @@ public class MainActivity extends Activity {
                             12 // 6th
                       };
                       mBasePedalPosition = 12.0;
-                      mMinRPM = 1700;
-                      mScaler = 1.3;
+                      mMinRPM = 1500;
+                      mScaler = 0.8;
                       mCurvature = -20;
-                      mRpmOffset = 1750;
+                      mRpmOffset = 1625;
                 } 
                 
                 if (selectedVehicle.equals("2012 Mustang GT500")) {
@@ -408,9 +408,9 @@ public class MainActivity extends Activity {
                       };
                       mBasePedalPosition = 12.0;
                       mMinRPM = 1500;
-                      mScaler = 1.2;
+                      mScaler = 0.8;
                       mCurvature = -20;
-                      mRpmOffset = 1570;
+                      mRpmOffset = 1625;
                 }
             }
 
