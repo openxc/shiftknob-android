@@ -170,24 +170,19 @@ public class MainActivity extends Activity {
 
     private ServiceConnection mConnection = new ServiceConnection() {
         // Called when the connection with the service is established
-        public void onServiceConnected(ComponentName className, IBinder service) {
+        public void onServiceConnected(ComponentName className, 
+                IBinder service) {
             Log.i(TAG, "Bound to VehicleManager");
             mVehicleManager = ((VehicleManager.VehicleBinder) service)
                     .getService();
-            try {
-                mVehicleManager.addListener(VehicleSpeed.class, mSpeedListener);
-                mVehicleManager.addListener(EngineSpeed.class, mEngineListener);
-                mVehicleManager.addListener(AcceleratorPedalPosition.class,
-                        mPedalListener);
-                mVehicleManager.addListener(ShiftRecommendation.class,
-                        mShiftRecommendation);
-                mVehicleManager.addListener(TransmissionGearPosition.class,
-                        mTransmissionGearPosition);
-            } catch (VehicleServiceException e) {
-                Log.w(TAG, "Couldn't add listeners for measurements", e);
-            } catch (UnrecognizedMeasurementTypeException e) {
-                Log.w(TAG, "Couldn't add listeners for measurements", e);
-            }
+            mVehicleManager.addListener(VehicleSpeed.class, mSpeedListener);
+            mVehicleManager.addListener(EngineSpeed.class, mEngineListener);
+            mVehicleManager.addListener(AcceleratorPedalPosition.class,
+                    mPedalListener);
+            mVehicleManager.addListener(ShiftRecommendation.class,
+                    mShiftRecommendation);
+            mVehicleManager.addListener(TransmissionGearPosition.class,
+                    mTransmissionGearPosition);
             mIsBound = true;
         }
 
