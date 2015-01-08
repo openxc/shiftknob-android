@@ -301,6 +301,11 @@ public class MainActivity extends Activity {
         }
     };
 
+    public void onPulseButtonClick(View v) {
+        shift();
+        Toast.makeText(this, "Shift Indication", Toast.LENGTH_SHORT).show();
+    }
+    
     public void addVehicleSpinnerListener() {
         mVehicleSpinner = (Spinner) findViewById(R.id.vehicle_selector);
         mVehicleSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
