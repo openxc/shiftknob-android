@@ -1,0 +1,145 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    style="@style/AppTheme"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".MainActivity" >
+
+    <SeekBar
+        android:id="@+id/led_bar"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_centerInParent="true"
+        android:padding="50dp" />
+
+    <Switch
+        android:id="@+id/power_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:text="@string/power_title"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/engine_speed_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/vehicle_speed_label"
+        android:layout_alignLeft="@+id/vehicle_speed_label"
+        android:text="@string/engine_speed"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/pedal_position_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed_label"
+        android:layout_alignLeft="@+id/engine_speed_label"
+        android:text="@string/pedal_position"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/led_bar"
+        android:layout_centerHorizontal="true"
+        android:editable="false"
+        android:height="25dp"
+        android:width="200dp" />
+
+    <TextView
+        android:id="@+id/vehicle_speed_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_alignLeft="@+id/textView1"
+        android:text="@string/vehicle_speed"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/engine_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView1"
+        android:layout_below="@+id/pedal_position"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/vehicle_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_alignRight="@+id/textView1"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/pedal_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/engine_speed_label"
+        android:layout_alignRight="@+id/textView1"
+        android:text="0"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <Spinner
+    	android:id="@+id/vehicle_selector"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@+id/led_bar"
+    	android:layout_centerHorizontal="true"
+    	android:entries="@array/vehicles"
+    	android:prompt="@string/vehicle_prompt"
+    	android:textSize="25sp" />
+
+    <TextView
+    	android:id="@+id/seek_bar_label"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerVertical="true"
+    	android:layout_toLeftOf="@+id/led_bar"
+    	android:padding="5dp"
+    	android:text="Color:"
+    	android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+    	android:id="@+id/gear_position"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_above="@+id/textView1"
+    	android:layout_alignRight="@+id/led_bar"
+    	android:padding="10dp"
+    	android:text="-"
+    	android:textColor="#FFFFFF"
+    	android:textSize="90sp"
+    	android:textStyle="bold" />
+
+    <Button
+    	android:id="@+id/pulse_button"
+    	style="?android:attr/buttonStyleSmall"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentRight="true"
+    	android:layout_alignParentTop="true"
+    	android:text="Pulse"
+    	android:padding="10dp"
+    	android:textSize="20dp"
+    	android:onClick="onPulseButtonClick" />
+
+</RelativeLayout><!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/layout/activity_main.xml -->
