@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/arrays.xml -->
+    <eat-comment/>
+    <string-array name="data_types">
+        <item name="trace">Use a trace file</item>
+        <item name="vehicle_interface">Use a Vehicle Interface</item>
+    </string-array>
+    <string-array name="data_values">
+        <item name="trace">trace</item>
+        <item name="vehicle_interface">vehicle_interface</item>
+    </string-array>
+    <string-array name="mode_types">
+        <item name="fuel_economy">Fuel Economy</item>
+        <item name="performance">Performance</item>
+    </string-array>
+    <string-array name="mode_values">
+        <item name="performance">performance</item>
+        <item name="fuel_economy">fuel_economy</item>
+    </string-array>
+    <string-array name="vehicles">
+    	<item>Fiesta ST</item>
+    	<item>Figo</item>
+        <item>Focus ST</item>
+        <item>Mustang GT</item>
+        <item>2012 Mustang GT500</item>
+        <item>2013 Mustang GT500</item>
+    </string-array>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="accelerator_pedal_position_label">
+        Accelerator Pedal
+    </string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">Shift Indicator</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="bluetooth_mac_key">bluetooth_mac</string>
+    <string name="bluetooth_polling_key">bluetooth_polling</string>
+    <string name="brake_pedal_status_label">Brake Pedal</string>
+    <string name="bugsnag_token"/>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="button_text">Send Signal</string>
+    <string name="engine_speed">RPM:</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="engine_speed_label">Engine Speed</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="exitTitle">Close</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="fuel_consumed_since_restart_label">Fuel Consumed</string>
+    <string name="fuel_level_label">Fuel Level</string>
+    <string name="gps_overwrite_checkbox_key">overwrite_native_gps</string>
+    <string name="headlamp_status_label">Headlamp</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/shiftknob-android/fTDriver/unspecified/res/values/values.xml -->
+    <eat-comment/>
+    <string name="hello">Hello World!</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="high_beam_status_label">High Beams</string>
+    <string name="ignition_status_label">Ignition Status</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="indicator">Shift Indicator</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="menu_settings">Settings</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="native_gps_checkbox_key">use_native_gps</string>
+    <string name="network_host_key">network_host</string>
+    <string name="network_port_key">network_port</string>
+    <string name="notification_content">Connected to vehicle</string>
+    <string name="odometer_label">Odometer</string>
+    <string name="openxc_name">OpenXC</string>
+    <string name="parking_brake_status_label">Parking Brake</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="pedal_position">Pedal %:</string>
+    <string name="power_title">Driving Coach</string>
+    <string name="pref_audio_title">Audible Tone</string>
+    <string name="pref_calculation_off">CAN Signal</string>
+    <string name="pref_calculation_on">Calculate</string>
+    <string name="pref_calculation_summary">Calculate or wait for CAN signal</string>
+    <string name="pref_calculation_title">Efficiency: Shift Point Algorithm</string>
+    <string name="pref_haptic_title">Vibration</string>
+    <string name="pref_mode_off">Performance</string>
+    <string name="pref_mode_on">Fuel Efficiency</string>
+    <string name="pref_mode_summary">Efficiency/Performance</string>
+    <string name="pref_mode_title">Select Coaching Mode</string>
+    <string name="pref_operation_title">Shift Indicator Options</string>
+    <string name="pref_shift_point_summary">Input RPM value</string>
+    <string name="pref_shift_point_title">Performance: Shift Point</string>
+    <string name="pref_visual_title">Visual Signal</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="recording_checkbox_key">recording_enabled</string>
+    <string name="recording_directory_key">recording_output</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="settingsTitle">Settings</string>
+    <string name="shift_point_dialog">Shift Point: Enter RPM</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="steering_wheel_angle_label">Steering Wheel</string>
+    <string name="torque_at_transmission_label">Transmission Torque</string>
+    <string name="trace_source_file_key">playback_trace_file</string>
+    <string name="transmission_gear_position_label">
+        Transmission Gear
+    </string>
+    <string name="uploading_checkbox_key">uploading_enabled</string>
+    <string name="uploading_path_key">uploading_target</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="vehicle_prompt">Choose a Vehicle</string>
+    <string name="vehicle_speed">Speed:</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/build/intermediates/exploded-aar/com.openxcplatform/library/6.1.0/res/values/values.xml -->
+    <eat-comment/>
+    <string name="vehicle_speed_label">Vehicle Speed</string>
+    <string name="windshield_wiper_status_label">Windshield Wiper</string>
+    <!-- From: file:/C:/Users/DMELCHE6/Documents/GitHub/shiftknob-android/app/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="android:Theme.Holo">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.openxcplatform"
+    android:versionCode="2"
+    android:versionName="6.1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="22" />
+
+    <application>
+        <service android:name="com.openxc.VehicleManager" />
+        <service
+            android:name="com.openxc.remote.VehicleService"
+            android:process=":remote" />
+
+        <activity android:name="com.openxc.interfaces.usb.UsbDeviceAttachmentActivity" />
+    </application>
+
+</manifest>

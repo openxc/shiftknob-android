@@ -122,20 +122,23 @@ repostiroy for details on the JSON-formatted message protocol.
 
 ## Dependencies
 
+This section assumes building with [Android Studio]
+(http://developer.android.com/sdk/index.html).
+
 **OpenXC Libraries:** The [OpenXC Android
-API](https://github.com/openxc/openxc-android handles all vehicle data
-connections. The library includes [installation
-instructions](http://openxcplatform.com/android/api-guide.html), example code
-and additional documentation in the README file. This library is needed to
-access any vehicle data.
+API](https://github.com/openxc/openxc-android) handles all vehicle data
+connections and is needed to access any vehicle data. Add the line 
+'compile 'com.openxcplatform:library:6.1.6+''
+to the app module build.gradle.  (Not the Project build.gradle.)
+Use of the library is detailed in the [API Guide]
+(http://openxcplatform.com/android/api-guide.html).
 
 **FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download
-the OpenXC fork of this library and import it into the same Eclipse workspace as
-the Shift Indicator project.
+the OpenXC fork of this library and import it (File->New->Import Module)
+into the Shift Indicator project.
 
-If there are still errors, go to Android->Properties for the
-ShiftIndicator project and manually re-link the `openxc` and `FTDriver`
-libraries at the bottom of the window.
+If there are still errors, go to File->Project Structure, select the 'app' 
+module, and re-link the `openxc` and `FTDriver` libraries.
 
 ## Resources
 
