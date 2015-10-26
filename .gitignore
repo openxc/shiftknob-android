@@ -8,3 +8,12 @@ reference
 .settings
 .project
 .classpath
+.idea/
+*.iml
+fTDriver/
+
+# Gradle files
+.gradle/
+build/
+/*/build/
+*/app/build/
