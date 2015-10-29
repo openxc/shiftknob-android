@@ -129,16 +129,21 @@ This section assumes building with [Android Studio]
 API](https://github.com/openxc/openxc-android) handles all vehicle data
 connections and is needed to access any vehicle data. Add the line 
 > compile 'com.openxcplatform:library:6.1.6+'
+
 to the app module build.gradle.  (Not the Project build.gradle.)
 Use of the library is detailed in the [API Guide]
 (http://openxcplatform.com/android/api-guide.html).
 
-**FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download
-the OpenXC fork of this library and import it (File->New->Import Module)
-into the Shift Indicator project.
+**FT Driver:** If the app is used with the Arduino controlled custom shiftknob,
+[FTDriver][] is also required. Download the OpenXC fork of this library and 
+import it (File->New->Import Module) into the Shift Indicator project.
+
+**PebbleKit** If the app is used with a Pebble smart watch, 
+[Pebblekit][https://github.com/pebble/pebble-android-sdk/] is required.
+Please refer to the [use instructions][https://github.com/pebble/pebble-android-sdk/#using-pebblekit-android].
 
 If there are still errors, go to File->Project Structure, select the 'app' 
-module, and re-link the `openxc` and `FTDriver` libraries.
+module, and re-link the necessary libraries.
 
 ## Resources
 
