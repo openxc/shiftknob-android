@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
-public class ArduinoHardware {
+public class ArduinoHardware implements HardwareInterface {
 
     private static final String TAG = "ArduinoHardware";
 

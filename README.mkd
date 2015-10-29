@@ -128,7 +128,7 @@ This section assumes building with [Android Studio]
 **OpenXC Libraries:** The [OpenXC Android
 API](https://github.com/openxc/openxc-android) handles all vehicle data
 connections and is needed to access any vehicle data. Add the line 
-    compile 'com.openxcplatform:library:6.1.6+'
+> compile 'com.openxcplatform:library:6.1.6+'
 to the app module build.gradle.  (Not the Project build.gradle.)
 Use of the library is detailed in the [API Guide]
 (http://openxcplatform.com/android/api-guide.html).

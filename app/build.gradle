@@ -20,4 +20,10 @@ android {
 dependencies {
     compile project(':fTDriver')
     compile 'com.openxcplatform:library:6.1.0+'
+    compile 'com.getpebble:pebblekit:3.0.0'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }

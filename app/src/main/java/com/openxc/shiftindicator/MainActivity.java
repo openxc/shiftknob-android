@@ -2,6 +2,7 @@ package com.openxc.shiftindicator;
 
 import java.util.Date;
 
+import com.getpebble.android.kit.PebbleKit;
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;
@@ -54,7 +55,7 @@ public class MainActivity extends Activity {
     // USB setup:
     public static final String ACTION_USB_PERMISSION = "com.ford.openxc.USB_PERMISSION";
 
-    static ArduinoHardware mArduinoHardware = null;
+    static HardwareInterface mShiftHardware = null;
 
     UsbManager mUsbManager = null;
 
@@ -122,7 +123,7 @@ public class MainActivity extends Activity {
 
             public void onProgressChanged(SeekBar seekBar, int progress,
                     boolean fromUser) {
-                mArduinoHardware.sendColor(progress * 255 / 100);
+                mShiftHardware.sendColor(progress * 255 / 100);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -584,7 +585,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        mArduinoHardware.sendDigit(g);
+        mShiftHardware.sendDigit(g);
     }
 
     /**
@@ -595,7 +596,7 @@ public class MainActivity extends Activity {
      */
     private void shift() {
         if (mSharedPrefs.getBoolean("pref_haptic_feedback", false)) {
-            mArduinoHardware.turnOnShiftIndication();
+            mShiftHardware.turnOnShiftIndication();
         }
 
         if (mSharedPrefs.getBoolean("pref_audio_feedback", false)) {
@@ -651,7 +652,7 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if(UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                mArduinoHardware.usbDetached(intent);
+                mShiftHardware.usbDetached(intent);
             }
         }
     };
@@ -659,14 +660,15 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        mArduinoHardware = new ArduinoHardware(mUsbManager);
-        mArduinoHardware.connect();
+        //mShiftHardware = new ArduinoHardware(mUsbManager);
+        mShiftHardware = new PebbleHardware(this);
+        mShiftHardware.connect();
     }
 
     public void onExit(View view) {
 
-        if (mArduinoHardware != null) {
-            mArduinoHardware.end();
+        if (mShiftHardware != null) {
+            mShiftHardware.end();
         }
         if (mIsBound) {
             Log.i(TAG, "Unbinding from vehicle service before exit");
