@@ -133,9 +133,10 @@ to the app module build.gradle.  (Not the Project build.gradle.)
 Use of the library is detailed in the [API Guide]
 (http://openxcplatform.com/android/api-guide.html).
 
-**FT Driver:** The Shift Indicator app also requires the [FTDriver][]. Download
-the OpenXC fork of this library and import it (File->New->Import Module)
-into the Shift Indicator project.
+**FT Driver:** The Shift Indicator app also requires the [FTDriver by
+ksksue](https://github.com/openxc/FTDriver). This dependency is also
+automatically included in the `build.gradle` file and is made available by an
+Android package manager called `Jitpack.io`.
 
 If there are still errors, go to File->Project Structure, select the 'app' 
 module, and re-link the `openxc` and `FTDriver` libraries.
